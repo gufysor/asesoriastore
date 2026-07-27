@@ -140,9 +140,17 @@ function paintInfo() {
 }
 export function goTo(i, animate = true) {
   const n = CFG.slides;
-  let d = ((i - S.index) % n + n) % n; if (d > n / 2) d -= n;
-  S.index = ((i % n) + n) % n;
-  S.from = S.progress; S.to = S.progress + d / n;
+  /* Anclar SIEMPRE a la vuelta entera más cercana a la posición actual: tras
+     un drag (o a mitad de transición) S.progress es arbitrario, y sumar el
+     delta sobre él dejaba el carrusel asentado entre dos cards (la costura
+     al centro). El delta se calcula contra la card visible, no contra el
+     índice viejo, y el destino es múltiplo exacto de 1/n. */
+  const base = Math.round(S.progress * n);
+  const baseIdx = ((base % n) + n) % n;
+  const tgt = ((i % n) + n) % n;
+  let d = ((tgt - baseIdx) % n + n) % n; if (d > n / 2) d -= n;
+  S.index = tgt;
+  S.from = S.progress; S.to = (base + d) / n;
   S.tStart = animate ? performance.now() : -1;
   if (!animate) S.progress = S.to;
   APP.index = S.index;
