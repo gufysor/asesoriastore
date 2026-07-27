@@ -128,7 +128,9 @@
         transition:transform .45s cubic-bezier(.3,0,.2,1)}
   .menu::before{content:'';position:absolute;inset:-40%;opacity:.35;pointer-events:none;
         background:repeating-radial-gradient(circle at 80% 10%,transparent 0 46px,rgba(255,255,255,.10) 46px 48px)}
-  .menu .mword{font-family:var(--display);font-size:230px;line-height:.83;letter-spacing:.005em;
+  /* 230px en la referencia (palabras EN de ≤7 letras); las nuestras son más
+     largas, así que baja para no invadir las columnas */
+  .menu .mword{font-family:var(--display);font-size:150px;line-height:.83;letter-spacing:.005em;
         text-transform:uppercase;flex:0 0 auto;margin-right:auto;position:relative;z-index:1}
   .menu .mcols{display:flex;gap:44px;position:relative;z-index:1;padding-top:14px}
   .mgroup{display:flex;flex-direction:column;align-items:flex-start;gap:14px}
@@ -352,56 +354,62 @@
     <nav class="nav" id="nav">
   <div class="logo">GUF CORPORATION</div>
   <div class="links">
-    <a href="#" data-menu="explore">Explore</a>
-    <a href="#" data-menu="learn">Learn</a>
-    <a href="#" data-menu="build">Build</a>
-    <a href="#" data-menu="bridge">Bridge</a>
+    <a href="#" data-menu="asesorias">Asesorías</a>
+    <a href="#" data-menu="descuentos">Descuentos</a>
+    <a href="#" data-menu="cuentas">Cuentas</a>
+    <a href="#" data-menu="productos">Productos</a>
   </div>
 </nav>
 
 <!-- menús desplegables (estructura medida en la referencia) -->
-<div class="menu" data-panel="explore">
-  <div class="mword">Explore</div>
+<div class="menu" data-panel="asesorias">
+  <div class="mword">Asesorías</div>
   <div class="mcols">
     <div class="mgroup">
-      <h4><a href="#">Spotlight</a></h4>
+      <h4><a href="#">Personalizadas</a></h4>
       <div class="row">
-        <a class="mbtn" href="#">Learn more</a>
-        <a class="mbtn ghost" href="#">Intermission</a>
+        <a class="mbtn" href="#">Ver más</a>
+        <a class="mbtn ghost" href="#">Agendar</a>
       </div>
-      <a class="mlink" href="#">Spotlight FAQ</a>
+      <a class="mlink" href="#">Preguntas frecuentes</a>
     </div>
     <div class="mgroup">
-      <h4><a href="#">All apps</a></h4>
-      <a class="mbtn" href="#">Discover all</a>
+      <h4><a href="#">Servicios</a></h4>
+      <a class="mbtn" href="#">Ver todos</a>
     </div>
     <div class="mgroup">
-      <h4><a href="#">Collections</a></h4>
-      <a class="mbtn" href="#">Discover all</a>
+      <h4><a href="#">Planes</a></h4>
+      <a class="mbtn" href="#">Ver todos</a>
     </div>
   </div>
 </div>
-<div class="menu" data-panel="learn">
-  <div class="mword">Learn</div>
+<div class="menu" data-panel="descuentos">
+  <div class="mword">Descuentos</div>
   <div class="mcols">
-    <div class="mgroup"><h4><a href="#">The blueprint</a></h4></div>
+    <div class="mgroup">
+      <h4><a href="#">Ofertas del mes</a></h4>
+      <a class="mbtn" href="#">Ver ofertas</a>
+    </div>
   </div>
 </div>
-<div class="menu" data-panel="build">
-  <div class="mword">Build</div>
+<div class="menu" data-panel="cuentas">
+  <div class="mword">Cuentas</div>
   <div class="mcols">
     <div class="mgroup list">
-      <a class="big" href="#">Docs</a>
-      <a class="big" href="#">Mainnet hub</a>
-      <a class="big" href="#">Testnet hub</a>
-      <a class="big" href="#">Block explorer</a>
+      <a class="big" href="#">Streaming</a>
+      <a class="big" href="#">Gaming</a>
+      <a class="big" href="#">Software</a>
+      <a class="big" href="#">Educación</a>
     </div>
   </div>
 </div>
-<div class="menu" data-panel="bridge">
-  <div class="mword">Bridge</div>
+<div class="menu" data-panel="productos">
+  <div class="mword">Productos</div>
   <div class="mcols">
-    <div class="mgroup"><h4><a href="#">Bridge</a></h4></div>
+    <div class="mgroup">
+      <h4><a href="#">Catálogo</a></h4>
+      <a class="mbtn" href="#">Ver todos</a>
+    </div>
   </div>
 </div>
 
