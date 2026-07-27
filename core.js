@@ -12,11 +12,11 @@ export const easeOut = t => 1 - Math.pow(1 - t, 3);
 
 /* ---- slides: colores del degradado medidos de uColor1/uColor2 en reposo ---- */
 export const SLIDES = [
-  { name: 'APECHURCH',      cat: 'GAMES',                 desc: 'Fully decentralized, non-custodial gaming hub built on ApeChain.', c1: '#a37a1f', c2: '#26610d' },
+  { name: 'APECHURCH',      cat: 'GAMES',                 desc: 'Fully decentralized, non-custodial gaming hub built on GUF Corporation.', c1: '#a37a1f', c2: '#26610d' },
   { name: 'OPENSEA',        cat: 'COLLECTIBLES, FINANCE', desc: 'An NFT marketplace, and now supports token trading.',             c1: '#ffffff', c2: '#0086ff' },
-  { name: 'CLUTCH MARKETS', cat: 'GAMES, FINANCE',        desc: 'Decentralized parlay platform on ApeChain.',                      c1: '#1a4910', c2: '#488434' },
-  { name: 'OTHERSIDE',      cat: 'GAMES',                 desc: 'Web3-enabled virtual worlds on ApeChain.',                        c1: '#568d9f', c2: '#3e6674' },
-  { name: 'APE EXPRESS',    cat: 'FINANCE',               desc: 'The ultimate launchpad experience on ApeChain.',                  c1: '#02224c', c2: '#bb1001' },
+  { name: 'CLUTCH MARKETS', cat: 'GAMES, FINANCE',        desc: 'Decentralized parlay platform on GUF Corporation.',                      c1: '#1a4910', c2: '#488434' },
+  { name: 'OTHERSIDE',      cat: 'GAMES',                 desc: 'Web3-enabled virtual worlds on GUF Corporation.',                        c1: '#568d9f', c2: '#3e6674' },
+  { name: 'APE EXPRESS',    cat: 'FINANCE',               desc: 'The ultimate launchpad experience on GUF Corporation.',                  c1: '#02224c', c2: '#bb1001' },
 ];
 
 /* estado compartido entre módulos (el fondo fijo necesita el color del slide

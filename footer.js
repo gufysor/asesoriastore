@@ -19,7 +19,7 @@ import { APP, makeGL, DispSystem, buildGrid, texFromCanvas } from './core.js';
 const canvas = document.getElementById('footer-gl');
 const gl = makeGL(canvas);
 
-const WORD = 'APECHAIN';
+const WORD = 'GUF CORPORATION';
 const MASK_W = 2048, MASK_H = 512;
 
 function buildMask() {

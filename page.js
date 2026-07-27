@@ -27,18 +27,18 @@ setTimeout(dismissPre, 5000);   // red de seguridad
 /* ------------------------------------------------------------ apps del grid */
 /* orden medido en la referencia (flujo por columnas, destacada 2×2 en medio) */
 const APPS = [
-  { name: 'OTHERSIDE',      cat: 'GAMES',                 desc: 'Web3-enabled virtual worlds on ApeChain' },
+  { name: 'OTHERSIDE',      cat: 'GAMES',                 desc: 'Web3-enabled virtual worlds on GUF Corporation' },
   { name: 'CAMELOT',        cat: 'FINANCE',               desc: 'Decentralized exchange' },
   { name: 'MADE BY APES',   cat: 'INTELLECTUAL PROPERTY', desc: 'A club full of builders' },
-  { name: 'APE PORTAL',     cat: 'INFRASTRUCTURE',        desc: 'Get on ApeChain' },
-  { name: 'BLEVER',         cat: 'COLLECTIBLES',          desc: 'An NFT launchpad for ApeChain', feature: true },
+  { name: 'APE PORTAL',     cat: 'INFRASTRUCTURE',        desc: 'Get on GUF Corporation' },
+  { name: 'BLEVER',         cat: 'COLLECTIBLES',          desc: 'An NFT launchpad for GUF Corporation', feature: true },
   { name: 'APE EXPRESS',    cat: 'FINANCE',               desc: 'The ultimate launchpad experience' },
   { name: 'CLUTCH MARKETS', cat: 'GAMES, FINANCE',        desc: 'Decentralized parlay platform' },
-  { name: 'APESCAN',        cat: 'INFRASTRUCTURE',        desc: 'The ApeChain block explorer' },
+  { name: 'APESCAN',        cat: 'INFRASTRUCTURE',        desc: 'The GUF Corporation block explorer' },
   { name: 'GTRADE',         cat: 'FINANCE',               desc: 'Decentralized leveraged trading' },
-  { name: 'OPENOCEAN',      cat: 'FINANCE',               desc: 'DEX aggregator on ApeChain' },
+  { name: 'OPENOCEAN',      cat: 'FINANCE',               desc: 'DEX aggregator on GUF Corporation' },
   { name: 'CYAN',           cat: 'FINANCE',               desc: 'BNPL for NFTs' },
-  { name: 'MINTPAD',        cat: 'COLLECTIBLES',          desc: 'Create and mint on ApeChain' },
+  { name: 'MINTPAD',        cat: 'COLLECTIBLES',          desc: 'Create and mint on GUF Corporation' },
 ];
 
 const grid = document.getElementById('appgrid');
