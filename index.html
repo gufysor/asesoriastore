@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Réplica técnica — hero WebGL + página completa</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' fill='%23000'/><rect x='3' y='6' width='10' height='4' fill='%23fff'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=DM+Sans:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --display:'Anton', Impact, sans-serif;   /* sustituto libre de `manuka` (comercial) */
+    --sans:'DM Sans', system-ui, sans-serif;
+    --mono:'DM Mono', ui-monospace, monospace;
+    --pad:147px;
+    --paper:#e2f0ff;                         /* bg-ape-grey medido: rgb(226,240,255) */
+    --grad:linear-gradient(150deg,#ff8a3d,#ff4fa3 45%,#7d5cff 78%,#39d0ff);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:#000;color:#fff;font-family:var(--sans);overflow-x:hidden}
+
+  /* ---------- preloader ---------- */
+  #pre{position:fixed;inset:0;z-index:100;background:#fff;color:#000;
+       display:grid;place-items:center;transition:opacity .8s ease,visibility .8s}
+  #pre .pw{font-family:var(--display);font-size:clamp(38px,7.6vw,116px);letter-spacing:.01em;
+           text-transform:uppercase;overflow:hidden}
+  #pre .pw span{display:inline-block;animation:rise .9s cubic-bezier(.16,1,.3,1) both}
+  @keyframes rise{from{transform:translateY(105%)}to{transform:translateY(0)}}
+  #pre.gone{opacity:0;visibility:hidden}
+
+  /* ---------- fondo fijo (degradado WebGL, cubre toda la página) ---------- */
+  #bg{position:fixed;inset:0;width:100%;height:100%;z-index:0;display:block}
+
+  /* ---------- hero ---------- */
+  #hero{position:relative;height:100svh;width:100%;overflow:hidden;z-index:2}
+  #hero-gl{position:absolute;inset:0;width:100%;height:100%;display:block}
+  #ui{position:absolute;inset:0;pointer-events:none}
+  #ui button,#ui a{pointer-events:auto}
+
+  /* nav fijo: transparente sobre el hero (solo el velo degradado de arriba),
+     se funde a negro al bajar (alpha por JS), y se esconde/reaparece según la
+     dirección del scroll */
+  .nav{position:fixed;top:0;left:0;right:0;height:100px;z-index:20;display:flex;align-items:center;
+       background-color:rgba(0,0,0,0);transition:transform .35s ease,background-color .25s}
+  .nav::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;
+       background:linear-gradient(to bottom,rgba(0,0,0,.55),rgba(0,0,0,0))}
+  .nav.hidden{transform:translateY(-100%)}
+  .nav::after{content:'';position:absolute;left:0;right:0;bottom:0;height:1px;background:rgba(255,255,255,.18)}
+  .logo{position:absolute;left:32px;top:32px;height:48px;padding:0 18px;border:2px solid #fff;
+        display:grid;place-items:center;font-family:var(--display);font-size:22px;letter-spacing:.16em;line-height:1}
+  .links{margin:0 auto;display:flex;gap:48px}
+  /* medido: 16px/24px, "Explore" ocupa 54px de ancho (condensada) */
+  .links a{font-family:var(--display);font-size:16px;line-height:24px;letter-spacing:.04em;
+           text-transform:uppercase;color:#fff;text-decoration:none;opacity:.92;transition:opacity .25s}
+  .links a:hover{opacity:.55}
+
+  .info{position:absolute;left:var(--pad);bottom:56px;max-width:560px;z-index:15}
+  .chips{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+  .hot{font-family:var(--display);font-size:19px;letter-spacing:.04em;display:flex;align-items:center;gap:6px}
+  .chip{font-family:var(--mono);font-size:11px;letter-spacing:.09em;text-transform:uppercase;padding:5px 9px;
+        border-radius:6px;background:rgba(255,255,255,.19);backdrop-filter:blur(6px);white-space:nowrap}
+  .title{font-family:var(--display);font-size:82px;line-height:.88;text-transform:uppercase;margin-bottom:16px}
+  .desc{font-family:var(--mono);font-size:12.5px;line-height:1.5;letter-spacing:.04em;text-transform:uppercase;
+        max-width:330px;margin-bottom:20px;opacity:.95}
+  .launch{display:inline-grid;place-items:center;height:38px;padding:0 44px;border-radius:999px;
+          border:1px solid rgba(255,255,255,.85);background:transparent;color:#fff;cursor:pointer;
+          font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;transition:background .3s,color .3s}
+  .launch{position:relative}
+  .launch:hover{background:#fff;color:#000;box-shadow:0 0 26px rgba(255,255,255,.4)}
+  /* halos en capas: la referencia superpone copias SVG del botón a escalas
+     0.7778 / 0.875 / 1.0 con blur-filter y drop-shadow-filter, a opacidad 0 en
+     reposo. Aquí van como pseudo-elementos que escalan y se desvanecen. */
+  .launch::after,.arrow::after{content:'';position:absolute;inset:0;border-radius:inherit;
+        border:1px solid rgba(255,255,255,.9);transform:scale(.7778);opacity:0;filter:blur(7px);
+        transition:transform .55s cubic-bezier(.16,1,.3,1),opacity .55s;pointer-events:none}
+  .launch::after{border-radius:999px}
+  .launch:hover::after,.arrow:hover::after{transform:scale(1.2);opacity:.8}
+  .arrow::after{border-radius:16px}
+  .fadeable{transition:opacity .42s ease,transform .42s ease}
+  .info.swapping .fadeable{opacity:0;transform:translateY(10px)}
+
+  .arrows{position:absolute;right:47px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:16px;z-index:15}
+  .arrow{width:64px;height:64px;border-radius:16px;cursor:pointer;position:relative;background:rgba(255,255,255,.06);
+         backdrop-filter:blur(8px);display:grid;place-items:center;border:0;transition:background .3s}
+  .arrow::before{content:'';position:absolute;inset:0;border-radius:16px;padding:1.5px;background:var(--grad);
+        -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+        -webkit-mask-composite:xor;mask-composite:exclude}
+  .arrow:hover{background:rgba(255,255,255,.16)}
+  .arrow svg{width:13px;height:13px;fill:#fff}
+
+  .thumbs{position:absolute;right:190px;bottom:56px;display:flex;gap:8px;z-index:15}
+  .thumb{width:48px;height:48px;border-radius:8px;overflow:hidden;cursor:pointer;padding:0;border:2px solid transparent;
+         background:none;position:relative;transition:all .3s ease-in-out;opacity:.62}
+  .thumb canvas{width:100%;height:100%;display:block;border-radius:6px}
+  .thumb[data-active="1"]{border-color:#fff;opacity:1}
+  .thumb:hover{opacity:1}
+  .seeall{position:absolute;right:47px;bottom:118px;display:flex;align-items:center;gap:9px;font-family:var(--mono);
+          font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:#fff;text-decoration:none;z-index:15;opacity:.95}
+  .seeall:hover{opacity:.6}
+
+  /* ---------- overlay de blur a pantalla completa ----------
+     MEDIDO: se enciende cuando se abre un menú del nav — todo el contenido
+     tras el panel queda difuminado y oscurecido. */
+  #blurveil{position:fixed;inset:0;z-index:14;pointer-events:none;background:rgba(0,0,0,.1);
+            backdrop-filter:blur(60px);-webkit-backdrop-filter:blur(60px);opacity:0;
+            transition:opacity .5s ease}
+  body.menu-open #blurveil{opacity:1}
+
+  /* ---------- menús desplegables del nav ----------
+     Medido: panel a ancho completo bajo el nav (y=100, alto 363), azul sólido
+     con anillos topográficos, palabra gigante a la izquierda, columnas con
+     títulos 48px manuka y botones de 42px. El nav se vuelve azul sólido y el
+     item activo queda blanco mientras los demás bajan a ~.45. */
+  /* con menú abierto el fondo cambia instantáneo (si no, el panel se ve a
+     través del nav durante la transición de color) */
+  .nav.open{transition:transform .35s ease}
+  .nav.open .links a{opacity:.45}
+  .nav.open .links a.active{opacity:1}
+  /* el panel baja deslizándose desde detrás del nav y sube al cerrarse */
+  .menu{position:fixed;left:0;right:0;top:100px;height:363px;z-index:18;color:#fff;
+        background:#0244f5;display:flex;overflow:hidden;
+        padding:32px 70px 36px 27px;
+        visibility:hidden;pointer-events:none;transform:translateY(calc(-100% - 100px));
+        transition:transform .45s cubic-bezier(.3,0,.2,1),visibility 0s .45s}
+  .menu.on{visibility:visible;pointer-events:auto;transform:none;
+        transition:transform .45s cubic-bezier(.3,0,.2,1)}
+  .menu::before{content:'';position:absolute;inset:-40%;opacity:.35;pointer-events:none;
+        background:repeating-radial-gradient(circle at 80% 10%,transparent 0 46px,rgba(255,255,255,.10) 46px 48px)}
+  .menu .mword{font-family:var(--display);font-size:230px;line-height:.83;letter-spacing:.005em;
+        text-transform:uppercase;flex:0 0 auto;margin-right:auto;position:relative;z-index:1}
+  .menu .mcols{display:flex;gap:44px;position:relative;z-index:1;padding-top:14px}
+  .mgroup{display:flex;flex-direction:column;align-items:flex-start;gap:14px}
+  .mgroup h4{font-family:var(--display);font-size:34px;line-height:1;text-transform:uppercase;white-space:nowrap}
+  .mgroup h4 a{color:#fff;text-decoration:none}
+  .mgroup .row{display:flex;gap:12px}
+  .mbtn{position:relative;display:inline-grid;place-items:center;height:42px;padding:0 24px;border-radius:21px;white-space:nowrap;
+        font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;
+        color:#fff;text-decoration:none;background:linear-gradient(180deg,#1668ff,#39c6ff)}
+  .mbtn.ghost{background:transparent}
+  .mbtn::before{content:'';position:absolute;inset:0;border-radius:21px;padding:1.5px;background:var(--grad);
+        -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+        -webkit-mask-composite:xor;mask-composite:exclude}
+  .mbtn:hover{filter:brightness(1.15)}
+  .mlink{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;
+         color:#fff;text-decoration:none;opacity:.92}
+  .mlink:hover{opacity:.6}
+  /* variante lista vertical (menú Build) */
+  .mgroup.list a.big{font-family:var(--display);font-size:34px;line-height:1.32;text-transform:uppercase;
+        color:#fff;text-decoration:none}
+  .mgroup.list a.big:hover{opacity:.6}
+
+  /* ---------- contenido ----------
+     CLAVE: el contenido NO lleva fondo opaco. El canvas #bg es `fixed` y cubre
+     el viewport entero pintando por encima del bg-ape-grey del contenedor, así
+     que TODA la página vive sobre ese mismo degradado. Eso es lo que hace que no
+     exista costura entre el hero y lo de abajo: no hay ningún cambio de fondo.
+     Verificado a píxel: a scrollY=120 el borde del hero cae en y=740 y la rampa
+     sigue lisa, rgb(78,105,19) → rgb(66,102,17) hasta y=850. */
+  .paper{position:relative;z-index:2;background:transparent;color:#000}
+
+  /* ---------- BackgroundCards del Spotlight ----------
+     Medido: viven DENTRO de .SectionSpotlight (no sobre el hero), sin ningún
+     filtro blur. La suavidad sale de imágenes pequeñas (608×336) estiradas con
+     object-cover a 434×647 + opacidad 0.2 / 0.4. border-radius 3.75%.
+     Rotación 3D anidada + parallax scroll-driven. */
+  /* el recorte hace falta para que las cards no se monten sobre el hero, pero
+     los bordes del recorte se difuminan para que no aparezca una línea recta */
+  .spotbg{position:absolute;left:0;right:0;top:96px;height:860px;
+          overflow:hidden;pointer-events:none;z-index:0;
+          -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 110px,
+                             #000 calc(100% - 110px),transparent 100%);
+          mask-image:linear-gradient(to bottom,transparent 0,#000 110px,
+                     #000 calc(100% - 110px),transparent 100%)}
+  .spotbg .gridwrap{position:absolute;left:234px;width:1212px;top:0;height:100%}
+  .bgcard{position:absolute;border-radius:3.75%;overflow:hidden;will-change:transform;
+          -webkit-mask-image:radial-gradient(ellipse at 50% 50%,#000 40%,transparent 88%);
+          mask-image:radial-gradient(ellipse at 50% 50%,#000 40%,transparent 88%)}
+  .bgcard .inner{width:100%;height:100%;border-radius:3.75%;overflow:hidden;
+                 transform:perspective(1200px) rotateY(15.2deg) rotateX(.55deg) rotateZ(.35deg)}
+  /* la imagen es pequeña y se estira con object-cover: eso la suaviza sola,
+     sin filtro blur (la referencia no declara ninguno) */
+  .bgcard .inner img{width:100%;height:100%;object-fit:cover;display:block}
+  .bgcard.left {left:-277px; top:-60px; width:439px; height:579px; opacity:.2}
+  .bgcard.right{left:830px;  top:22px;  width:561px; height:709px; opacity:.4}
+
+  /* ---------- visual 3D del Spotlight (aro degradado + overlay + imagen) ---------- */
+  /* Medido: wrapper 688×460 en x=848 con matrix3d que incluye scale 1.437, así
+     que la card se sale de la pantalla por la derecha. El meta va ENCIMA de la
+     card, en blanco (medido: su caja y=632 cae dentro de la card, 417..877). */
+  .spotcard{position:absolute;left:-102px;top:-80px;width:688px;height:460px;
+            transform-origin:0 50%;
+            transform:perspective(1600px) rotateZ(6.5deg) rotateY(-12deg) scale(1.44)}
+  .spotcard .ring{position:absolute;inset:0;border-radius:16px;
+                  background:linear-gradient(45deg,#a281ff,#ff8a3d 58%,#39d0ff)}
+  .spotcard .shot{position:absolute;inset:2px;border-radius:16px;overflow:hidden}
+  .spotcard .shot img{width:100%;height:100%;object-fit:cover;display:block}
+  .spotcard .tint{position:absolute;inset:2px;border-radius:16px;
+                  background:linear-gradient(182deg,rgba(24,83,117,.62),rgba(3,10,33,.28))}
+  .spotmeta{position:absolute;left:0;top:206px;z-index:3;color:#fff;
+            display:flex;flex-direction:column;gap:6px;max-width:305px}
+  .spotmeta h3{font-family:var(--display);font-size:48px;line-height:1;text-transform:uppercase}
+  .spotmeta p{font-family:var(--mono);font-size:12px;line-height:1.35;letter-spacing:.04em;
+              text-transform:uppercase}
+  .spotmeta .pill{background:#fff;color:#000;margin-top:10px}
+  .spotmeta .pill:hover{background:rgba(255,255,255,.82)}
+  .spotmeta .pill::before{display:none}
+
+  .reveal{opacity:0;transform:translateY(34px);transition:opacity .9s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1)}
+  .reveal.in{opacity:1;transform:none}
+
+  /* ---------- spotlight ---------- */
+  /* min-h-svh py-96 medido; el contenido en grid de 12 columnas */
+  /* medido: altura total 1052 = 100svh + py-96 arriba y abajo */
+  .spot{position:relative;z-index:1;min-height:calc(100svh + 192px);padding:96px 0;
+        /* medido: columna de texto 673px desde x=147; columna derecha desde x=950 */
+        display:grid;grid-template-columns:var(--pad) minmax(0,673px) 1fr 443px 47px;
+        gap:0 16px;align-content:center}
+  .spotcol{grid-column:2}
+  .spotside{grid-column:4;position:relative}
+  .lockup{display:inline-flex;align-items:stretch;height:38px;margin-bottom:24px;
+          font-family:var(--display);font-size:22px;letter-spacing:.02em;text-transform:uppercase;
+          border-radius:3px;overflow:hidden}
+  .lockup b{background:#000;color:#fff;padding:0 10px;display:grid;place-items:center;font-weight:400}
+  .lockup i{background:#000;color:#fff;padding:0 10px;display:grid;place-items:center;font-style:normal;
+            background:#0b0b0b}
+  /* La referencia usa 120px con manuka (ultra condensada) y entra en 2 líneas de
+     673px. Anton es más ancha, así que bajo el tamaño para conservar el bloque
+     de 2–3 líneas sin que los glifos se solapen. */
+  .spot h2{font-family:var(--display);font-size:clamp(44px,6.1vw,88px);line-height:.86;
+           text-transform:uppercase;margin-bottom:24px;letter-spacing:-.005em}
+  .spot .body{max-width:560px;font-size:16px;line-height:1.32;letter-spacing:-.005em}
+  .spot .body p{margin-bottom:1em}
+  .spot .cta{display:flex;gap:24px;margin-top:24px;flex-wrap:wrap}
+  /* UIBtn medido: 140×42, rounded-16, bg rgba(0,0,0,.1) — no son pills */
+  .pill{position:relative;display:inline-grid;place-items:center;height:42px;min-width:140px;padding:0 20px;
+        border-radius:16px;background:rgba(0,0,0,.1);color:#000;text-decoration:none;cursor:pointer;border:0;
+        font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;
+        transition:background .3s}
+  .pill::before{content:'';position:absolute;inset:0;border-radius:16px;padding:2px;background:var(--grad);
+        -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+        -webkit-mask-composite:xor;mask-composite:exclude}
+  .pill:hover{background:rgba(0,0,0,.2)}
+  .pill.light{color:#fff;background:rgba(255,255,255,.12)}
+  .pill.light:hover{background:rgba(255,255,255,.24)}
+
+  /* ---------- grid de apps ----------
+     Medido: sección py-96, altura total 830. Cards 268×273 con gap 24px h y v,
+     radio 0. Primera card en x=147, destacada 559×570 (2×2). El grid desborda
+     (scrollWidth 3056 vs 1425) y se arrastra; NO se mueve con el scroll de la
+     página. En hover la card no se transforma ni proyecta sombra. */
+  .apps{padding:96px 0;overflow:hidden}
+  .apps .head{display:flex;align-items:baseline;justify-content:space-between;
+              padding:0 150px 0 var(--pad);margin-bottom:32px}
+  .apps h2{font-family:var(--display);font-size:26px;line-height:1.12;text-transform:uppercase;
+           display:flex;align-items:center;gap:12px}
+  .apps .head a{font-family:var(--mono);font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:#000;
+                text-decoration:none;display:flex;align-items:center;gap:8px;opacity:.9}
+  .apps .head a:hover{opacity:.55}
+  #appgrid{display:grid;grid-auto-flow:column;grid-template-rows:273px 273px;grid-auto-columns:268px;gap:24px;
+           padding:0 var(--pad);overflow-x:auto;scrollbar-width:none;cursor:grab}
+  #appgrid::-webkit-scrollbar{display:none}
+  #appgrid.grabbing{cursor:grabbing}
+  .appcard{position:relative;border-radius:0;overflow:hidden;text-decoration:none;color:#fff;
+           background-size:cover;background-position:center;
+           display:flex;flex-direction:column;justify-content:space-between;padding:14px}
+  .appcard.feature{grid-row:span 2;grid-column:span 2}
+  /* Borde degradado SOLO en hover. La animación parte de dos esquinas
+     opuestas: desde arriba-izquierda crecen el brazo superior y el izquierdo,
+     desde abajo-derecha el inferior y el derecho — se cruzan y cierran el
+     marco. Al quitar el mouse se repliegan igual. */
+  .appcard .bt,.appcard .br,.appcard .bb,.appcard .bl{position:absolute;pointer-events:none;
+        transition:transform .38s cubic-bezier(.4,0,.2,1)}
+  .appcard .bt{top:0;left:0;width:100%;height:2px;transform:scaleX(0);transform-origin:left;
+        background:linear-gradient(90deg,#ff8a3d,#ff4fa3)}
+  .appcard .bl{top:0;left:0;width:2px;height:100%;transform:scaleY(0);transform-origin:top;
+        background:linear-gradient(180deg,#ff8a3d,#7d5cff)}
+  .appcard .bb{bottom:0;right:0;width:100%;height:2px;transform:scaleX(0);transform-origin:right;
+        background:linear-gradient(270deg,#39d0ff,#7d5cff)}
+  .appcard .br{bottom:0;right:0;width:2px;height:100%;transform:scaleY(0);transform-origin:bottom;
+        background:linear-gradient(0deg,#39d0ff,#ff4fa3)}
+  .appcard:hover .bt,.appcard:hover .bb{transform:scaleX(1)}
+  .appcard:hover .bl,.appcard:hover .br{transform:scaleY(1)}
+  .appcat{align-self:flex-start;font-family:var(--mono);font-size:11px;letter-spacing:.09em;text-transform:uppercase;
+          padding:5px 9px;border-radius:6px;background:rgba(255,255,255,.22);backdrop-filter:blur(6px)}
+  .appmeta{display:flex;flex-direction:column;gap:4px}
+  /* medido: 48px/48px manuka en todas, incluida la destacada */
+  .appname{font-family:var(--display);font-size:32px;line-height:1;text-transform:uppercase}
+  .appdesc{font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;opacity:.9}
+
+  /* ---------- discover / marquesinas ----------
+     Medido: sección py-96 h=688 con margen previo de 96. Palabras a 120px/94
+     manuka (bajo a 88px por Anton), azul rgb(0,84,250), thumbs 94×94 SIN radio,
+     botón 42px alto radio 16. */
+  .discover{margin-top:96px;padding:96px 0;margin-bottom:96px;overflow:hidden}
+  /* medido: cada fila ocupa ~195px de alto en la referencia */
+  .mq{overflow:hidden;height:196px;display:flex;align-items:center}
+  .mq-track{display:flex;align-items:center;width:max-content;will-change:transform}
+  .mq-item{display:flex;align-items:center;gap:34px;padding-right:34px}
+  /* negras en reposo; blancas al pasar el mouse */
+  .mq-word{font-family:var(--display);font-size:88px;line-height:.95;text-transform:uppercase;
+           white-space:nowrap;color:#000;transition:color .25s ease;cursor:pointer}
+  .mq-item:hover .mq-word{color:#0054fa}
+  .mq-thumb{width:94px;height:94px;border-radius:0;object-fit:cover;display:block}
+  .browse{display:grid;place-items:center;margin:64px auto 0;height:42px;padding:0 30px;border-radius:16px;
+          background:linear-gradient(180deg,#1668ff,#39c6ff);color:#fff;text-decoration:none;position:relative;
+          font-family:var(--mono);font-size:12px;letter-spacing:.13em;text-transform:uppercase;width:max-content}
+  .browse::before{content:'';position:absolute;inset:0;border-radius:16px;padding:2px;background:var(--grad);
+        -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+        -webkit-mask-composite:xor;mask-composite:exclude}
+
+  /* ---------- footer (transparente: deja ver el degradado fijo) ----------
+     Medido: h=759. Columnas en x=717/950/1184 con títulos a 26px manuka y
+     links 12px/14px. UNA sola imagen de fondo (footer-bg.webp, 1425×259)
+     pegada abajo. Canvas del wordmark: 1425×475 a 280px del top del footer. */
+  footer{position:relative;z-index:2;height:759px;padding:128px 0 0;color:#fff;overflow:hidden}
+  .fcols{display:flex;gap:98px;position:relative;z-index:3;margin-left:717px}
+  .fcol h3{font-family:var(--display);font-size:20px;line-height:1.1;text-transform:uppercase;margin-bottom:16px}
+  .fcol a{display:block;font-family:var(--mono);font-size:12px;line-height:14px;letter-spacing:.11em;
+          text-transform:uppercase;color:#fff;text-decoration:none;margin-bottom:16px;opacity:.94}
+  .fcol a:hover{opacity:.55}
+  .strip{position:absolute;left:0;right:0;bottom:0;height:259px;z-index:1}
+  .strip img{width:100%;height:100%;object-fit:cover;display:block}
+  #footer-gl{position:absolute;left:0;right:0;top:280px;width:100%;height:475px;z-index:2;display:block;pointer-events:none}
+  .legal{position:absolute;left:var(--pad);right:var(--pad);bottom:22px;z-index:4;display:flex;
+         justify-content:space-between;font-family:var(--mono);font-size:11.5px;letter-spacing:.09em;text-transform:uppercase}
+  .legal a{color:#fff;text-decoration:none;opacity:.9}
+  .legal a:hover{opacity:.55}
+
+  @media (max-width:1100px){
+    :root{--pad:24px}
+    .links{display:none}
+    .title{font-size:52px}
+    .arrows{right:16px}
+    .thumbs{right:auto;left:24px;bottom:24px}
+    .info{bottom:110px}
+    .seeall{right:24px;bottom:32px}
+    .spot{grid-template-columns:1fr;gap:44px;padding:100px var(--pad) 90px}
+    .mosaic img{width:calc(100% / 5)}
+    footer{padding-top:80px}
+    .fcols{justify-content:flex-start;flex-wrap:wrap;gap:40px}
+  }
+</style>
+</head>
+<body>
+
+<div id="pre"><div class="pw"><span>The place to ape</span></div></div>
+
+<canvas id="bg"></canvas>
+
+    <nav class="nav" id="nav">
+  <div class="logo">APECHAIN</div>
+  <div class="links">
+    <a href="#" data-menu="explore">Explore</a>
+    <a href="#" data-menu="learn">Learn</a>
+    <a href="#" data-menu="build">Build</a>
+    <a href="#" data-menu="bridge">Bridge</a>
+  </div>
+</nav>
+
+<!-- menús desplegables (estructura medida en la referencia) -->
+<div class="menu" data-panel="explore">
+  <div class="mword">Explore</div>
+  <div class="mcols">
+    <div class="mgroup">
+      <h4><a href="#">Spotlight</a></h4>
+      <div class="row">
+        <a class="mbtn" href="#">Learn more</a>
+        <a class="mbtn ghost" href="#">Intermission</a>
+      </div>
+      <a class="mlink" href="#">Spotlight FAQ</a>
+    </div>
+    <div class="mgroup">
+      <h4><a href="#">All apps</a></h4>
+      <a class="mbtn" href="#">Discover all</a>
+    </div>
+    <div class="mgroup">
+      <h4><a href="#">Collections</a></h4>
+      <a class="mbtn" href="#">Discover all</a>
+    </div>
+  </div>
+</div>
+<div class="menu" data-panel="learn">
+  <div class="mword">Learn</div>
+  <div class="mcols">
+    <div class="mgroup"><h4><a href="#">The blueprint</a></h4></div>
+  </div>
+</div>
+<div class="menu" data-panel="build">
+  <div class="mword">Build</div>
+  <div class="mcols">
+    <div class="mgroup list">
+      <a class="big" href="#">Docs</a>
+      <a class="big" href="#">Mainnet hub</a>
+      <a class="big" href="#">Testnet hub</a>
+      <a class="big" href="#">Block explorer</a>
+    </div>
+  </div>
+</div>
+<div class="menu" data-panel="bridge">
+  <div class="mword">Bridge</div>
+  <div class="mcols">
+    <div class="mgroup"><h4><a href="#">Bridge</a></h4></div>
+  </div>
+</div>
+
+
+<!-- ============================ HERO ============================ -->
+<section id="hero">
+  <canvas id="hero-gl"></canvas>
+  <div id="ui">
+
+    <div class="info" id="info">
+      <div class="chips fadeable">
+        <span class="hot">🔥 HOT</span>
+        <span class="chip" id="cat">GAMES</span>
+      </div>
+      <h2 class="title fadeable" id="title">APECHURCH</h2>
+      <p class="desc fadeable" id="desc">Fully decentralized, non-custodial gaming hub.</p>
+      <button class="launch fadeable">Launch</button>
+    </div>
+
+    <div class="arrows">
+      <button class="arrow" id="next" aria-label="Siguiente"><svg viewBox="0 0 10 12"><path d="M0 0l10 6-10 6z"/></svg></button>
+      <button class="arrow" id="prev" aria-label="Anterior"><svg viewBox="0 0 10 12"><path d="M10 0L0 6l10 6z"/></svg></button>
+    </div>
+
+    <a class="seeall" href="#apps">See all apps <svg width="9" height="10" viewBox="0 0 10 12"><path fill="#fff" d="M0 0l10 6-10 6z"/></svg></a>
+    <div class="thumbs" id="thumbs"></div>
+  </div>
+</section>
+
+<div id="blurveil"></div>
+
+<!-- ============================ CONTENIDO ============================ -->
+<div class="paper">
+
+  <!-- Spotlight -->
+  <section class="spot" id="spot">
+    <!-- capa de BackgroundCards: dentro de la sección, con parallax -->
+    <div class="spotbg">
+      <div class="gridwrap">
+        <div class="bgcard left"><div class="inner"></div></div>
+        <div class="bgcard right" data-fixedrot="1"><div class="inner"></div></div>
+      </div>
+    </div>
+
+    <div class="spotcol reveal">
+      <span class="lockup"><b>ApeChain</b><i>Spotlight</i></span>
+      <h2>Where dApps shine &amp; you win</h2>
+      <div class="body">
+        <p>Spotlight funciona por rondas. Cada ronda pone el foco en un conjunto de
+           aplicaciones de la red, de modo que descubrir algo nuevo y usarlo cuentan
+           por igual.</p>
+        <p>Al cerrar cada ronda, las posiciones más altas se llevan el premio. El
+           sistema recompensa tanto a quien construye como a quien participa: hay algo
+           en juego en todos los niveles, y bastante más para los más activos.</p>
+        <p><strong>Simple, divertido, rentable. ¿Listo para dejar tu marca?</strong></p>
+      </div>
+      <div class="cta">
+        <a class="pill" href="#">Get started</a>
+        <a class="pill" href="#">Go spotlight</a>
+      </div>
+    </div>
+
+    <div class="spotside reveal">
+      <div class="spotcard">
+        <div class="ring"></div>
+        <div class="shot"><img id="spot-shot" alt=""></div>
+        <div class="tint"></div>
+      </div>
+      <div class="spotmeta">
+        <h3>Clutch Markets</h3>
+        <p>Decentralized parlay platform on ApeChain.</p>
+        <a class="pill" href="#">What's this</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Grid de apps -->
+  <section class="apps reveal" id="apps">
+    <div class="head">
+      <h2>🚀 ApeChain apps</h2>
+      <a href="#">See all apps <svg width="9" height="10" viewBox="0 0 10 12"><path fill="#000" d="M0 0l10 6-10 6z"/></svg></a>
+    </div>
+    <div id="appgrid"></div>
+  </section>
+
+  <!-- Discover / marquesinas -->
+  <section class="discover reveal" id="discover">
+    <div class="mq"><div class="mq-track"></div></div>
+    <div class="mq"><div class="mq-track"></div></div>
+    <a class="browse" href="#">Browse all apps</a>
+  </section>
+
+</div>
+
+<!-- ============================ FOOTER ============================ -->
+<footer>
+  <div class="fcols">
+    <div class="fcol">
+      <h3>Build on ApeChain</h3>
+      <a href="#">Docs</a><a href="#">Mainnet hub</a><a href="#">Testnet hub</a><a href="#">Block explorer</a>
+    </div>
+    <div class="fcol">
+      <h3>ApeCoin</h3>
+      <a href="#">Discord</a><a href="#">Twitter / X</a><a href="#">Otherside calendar</a>
+    </div>
+    <div class="fcol">
+      <h3>ApeChain</h3>
+      <a href="#">Bridge</a><a href="#">The blueprint</a><a href="#">Telegram</a><a href="#">Twitter / X</a><a href="#">Brand kit</a>
+    </div>
+  </div>
+
+  <div class="strip"><img id="strip-img" alt=""></div>
+  <canvas id="footer-gl"></canvas>
+
+  <div class="legal">
+    <span>© 2026 — réplica técnica con fines de estudio</span>
+    <span><a href="#">Terms of service</a> &nbsp;|&nbsp; <a href="#">Privacy notice</a></span>
+  </div>
+</footer>
+
+<script type="module" src="./page.js"></script>
+</body>
+</html>
