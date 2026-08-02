@@ -13,8 +13,8 @@ import { APP, CONTENT, hex, makeGL, program, buffer, attrib, lerp, clamp } from 
      scroll ≥ ~600   → #e1edfa / #e2f0ff  (el "blanco" del cuerpo de la página)
      footer          → color propio, editable por el admin (footer.c1/c2)      */
 const PALE1 = [0.882, 0.929, 0.980], PALE2 = [0.886, 0.941, 1.000];
-const BLUE1 = hex((CONTENT.footer || {}).c1 || '#0086ff');
-const BLUE2 = hex((CONTENT.footer || {}).c2 || '#00b2ff');
+const BLUE1 = hex((CONTENT.footer || {}).c1 || '#020d26');
+const BLUE2 = hex((CONTENT.footer || {}).c2 || '#0b2e66');
 const smooth = t => t * t * (3 - 2 * t);
 const mix3 = (a, b, t) => [lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2], b[2], t)];
 
