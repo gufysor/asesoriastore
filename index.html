@@ -49,7 +49,15 @@
   .nav.hidden{transform:translateY(-100%)}
   .nav::after{content:'';position:absolute;left:0;right:0;bottom:0;height:1px;background:rgba(255,255,255,.18)}
   .logo{color:#fff;text-decoration:none;position:absolute;left:32px;top:32px;height:48px;padding:0 18px;border:2px solid #fff;
-        display:grid;place-items:center;font-family:var(--display);font-size:22px;letter-spacing:.16em;line-height:1}
+        display:grid;place-items:center;font-family:var(--display);font-size:22px;letter-spacing:.16em;line-height:1;
+        animation:lvib 2.6s ease-in-out infinite}
+  /* ondas constantes: dos anillos que salen del logo y se desvanecen */
+  .logo::before,.logo::after{content:'';position:absolute;inset:-2px;border:2px solid rgba(255,255,255,.75);
+        pointer-events:none;animation:lring 2.6s ease-out infinite}
+  .logo::after{animation-delay:1.3s}
+  @keyframes lring{0%{transform:scale(1);opacity:.65}75%{transform:scale(1.5);opacity:0}100%{transform:scale(1.5);opacity:0}}
+  @keyframes lvib{0%,100%{transform:scale(1)}6%{transform:scale(1.035)}12%{transform:scale(1)}}
+  @media (prefers-reduced-motion:reduce){.logo,.logo::before,.logo::after{animation:none}}
   .links{margin:0 auto;display:flex;gap:48px}
   /* medido: 16px/24px, "Explore" ocupa 54px de ancho (condensada) */
   .links a{font-family:var(--display);font-size:16px;line-height:24px;letter-spacing:.04em;
@@ -543,7 +551,7 @@
 </head>
 <body>
 
-<div id="pre"><div class="pw"><span>The place to ape</span></div></div>
+<div id="pre"><div class="pw"><span>Bienvenido a GUF Corporation</span></div></div>
 
 <canvas id="bg"></canvas>
 

@@ -48,6 +48,7 @@ function bindInputs(scope, obj) {
 function tabGeneral(el) {
   el.innerHTML = `<h3>General</h3>
     ${inp(CONTENT, 'brand', 'Nombre de la marca')}
+    ${inp(CONTENT, 'tagline', 'Mensaje de bienvenida (pantalla de carga)', 'Bienvenido a GUF Corporation')}
     ${inp(CONTENT, 'whatsapp', 'WhatsApp (solo dígitos, con código de país)', '51935090264')}
     <p class="ad-note">La contraseña del admin se cambia en el archivo data.json del servidor (campo adminPass).</p>`;
   bindInputs(el, CONTENT);

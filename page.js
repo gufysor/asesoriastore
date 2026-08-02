@@ -17,6 +17,10 @@ if (logo) logo.textContent = CONTENT.brand;
 
 /* ------------------------------------------------------------ preloader */
 const pre = document.getElementById('pre');
+if (pre && CONTENT.tagline) {
+  const w = pre.querySelector('.pw span');
+  if (w) w.textContent = CONTENT.tagline;
+}
 function dismissPre() {
   if (!pre || pre.dataset.done) return;
   pre.dataset.done = '1';
