@@ -48,13 +48,16 @@
        background:linear-gradient(to bottom,rgba(0,0,0,.55),rgba(0,0,0,0))}
   .nav.hidden{transform:translateY(-100%)}
   .nav::after{content:'';position:absolute;left:0;right:0;bottom:0;height:1px;background:rgba(255,255,255,.18)}
-  .logo{position:absolute;left:32px;top:32px;height:48px;padding:0 18px;border:2px solid #fff;
+  .logo{color:#fff;text-decoration:none;position:absolute;left:32px;top:32px;height:48px;padding:0 18px;border:2px solid #fff;
         display:grid;place-items:center;font-family:var(--display);font-size:22px;letter-spacing:.16em;line-height:1}
   .links{margin:0 auto;display:flex;gap:48px}
   /* medido: 16px/24px, "Explore" ocupa 54px de ancho (condensada) */
   .links a{font-family:var(--display);font-size:16px;line-height:24px;letter-spacing:.04em;
            text-transform:uppercase;color:#fff;text-decoration:none;opacity:.92;transition:opacity .25s}
   .links a:hover{opacity:.55}
+  /* dentro de una página: el item activo pleno, el resto atenuado */
+  body.page-open .links a{opacity:.45}
+  body.page-open .links a.active,body.page-open .links a:hover{opacity:1}
 
   .info{position:absolute;left:var(--pad);bottom:56px;max-width:560px;z-index:15}
   .chips{display:flex;align-items:center;gap:10px;margin-bottom:14px}
@@ -392,47 +395,53 @@
       text-transform:uppercase}
   .m-buy:hover{filter:brightness(1.08)}
 
-  /* ---------- paginas dedicadas ---------- */
-  #page-root{position:fixed;inset:0;z-index:50;background:#e9f1fd;color:#000;overflow-y:auto;
-      display:none;padding:0 var(--pad) 100px}
-  #page-root.on{display:block;animation:pgin .4s ease}
+  /* ---------- paginas reales (/asesorias, /descuentos, ...) ----------
+     Misma estructura que el main: cabecera oscura con brillo del color del
+     slide + anillos, y cuerpo palido debajo. El nav fijo queda encima
+     (z-index del overlay por debajo del nav) y el logo vuelve al inicio. */
+  #page-root{position:fixed;inset:0;z-index:15;background:#e9f1fd;color:#000;overflow-y:auto;
+      display:none}
+  #page-root.on{display:block;animation:pgin .35s ease}
   @keyframes pgin{from{opacity:0}to{opacity:1}}
-  .pg-head{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:18px;padding:22px 0;
-      background:linear-gradient(#e9f1fd 75%,rgba(233,241,253,0))}
-  .pg-back{width:46px;height:46px;border:2px solid #000;background:transparent;cursor:pointer;
-      font-size:17px;display:grid;place-items:center;transition:background .25s,color .25s}
-  .pg-back:hover{background:#000;color:#fff}
-  .pg-brand{font-family:var(--display);font-size:18px;letter-spacing:.14em;text-transform:uppercase}
-  .pg-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
-      color:#0244f5;margin-top:26px}
-  .pg-title{font-family:var(--display);font-size:clamp(64px,10vw,150px);line-height:.85;
-      text-transform:uppercase;margin:6px 0 16px}
-  .pg-intro{max-width:600px;font-size:16.5px;line-height:1.45;letter-spacing:-.005em;margin-bottom:46px}
+  .pg-hero{position:relative;background:#030a21;color:#fff;padding:168px var(--pad) 72px;overflow:hidden}
+  .pg-hero::before{content:'';position:absolute;inset:-60% -20%;pointer-events:none;opacity:.5;
+      background:repeating-radial-gradient(circle at 82% 18%,transparent 0 54px,rgba(255,255,255,.05) 54px 56px)}
+  .pg-hero::after{content:'';position:absolute;inset:0;pointer-events:none;
+      background:radial-gradient(720px 420px at 84% 0%,var(--pgc,#0244f5) 0%,transparent 70%);opacity:.5}
+  .pg-eyebrow{position:relative;z-index:1;font-family:var(--mono);font-size:11px;letter-spacing:.18em;
+      text-transform:uppercase;color:rgba(255,255,255,.65)}
+  .pg-title{position:relative;z-index:1;font-family:var(--display);font-size:clamp(70px,11vw,168px);
+      line-height:.85;text-transform:uppercase;margin:8px 0 14px}
+  .pg-intro{position:relative;z-index:1;max-width:560px;font-size:16px;line-height:1.45;
+      letter-spacing:-.005em;color:rgba(255,255,255,.72)}
+  .pg-body{padding:64px var(--pad) 120px}
 
-  /* pocas cosas -> lista editorial, no grilla de tarjetitas */
-  .pg-list{border-top:1px solid rgba(0,0,0,.18)}
-  .pg-item{display:grid;grid-template-columns:96px minmax(0,1fr) auto 40px;gap:26px;align-items:center;
-      padding:24px 0;border-bottom:1px solid rgba(0,0,0,.18);cursor:pointer}
-  .pg-item .ph{width:96px;height:96px}
-  .pg-item .ph>span{font-size:38px}
-  .pg-item h4{font-family:var(--display);font-size:clamp(30px,3.4vw,48px);line-height:.95;
-      text-transform:uppercase;transition:color .25s}
-  .pg-item p{font-family:var(--mono);font-size:12px;letter-spacing:.05em;text-transform:uppercase;
-      color:rgba(0,0,0,.55);margin-top:6px;line-height:1.5}
-  .pg-price{font-family:var(--display);font-size:22px;text-transform:uppercase;white-space:nowrap}
-  .pg-go{font-family:var(--mono);font-size:16px;justify-self:end;transition:transform .3s}
-  .pg-item:hover h4{color:#0054fa}
-  .pg-item:hover .pg-go{transform:translateX(6px)}
-  .pg-cta{display:inline-grid;place-items:center;height:46px;padding:0 30px;border-radius:16px;background:#25d366;
-      color:#fff;text-decoration:none;font-family:var(--mono);font-size:12px;letter-spacing:.1em;
-      text-transform:uppercase;margin-top:44px}
-  .pg-cta:hover{filter:brightness(1.08)}
+  /* pocas cosas -> filas editoriales con espacio real para la imagen */
+  .pg-list{display:flex;flex-direction:column}
+  .pg-item{display:grid;grid-template-columns:minmax(250px,400px) minmax(0,1fr);gap:44px;
+      align-items:center;padding:36px 0;border-bottom:1px solid rgba(0,0,0,.16);cursor:pointer}
+  .pg-item:first-child{border-top:1px solid rgba(0,0,0,.16)}
+  .pg-media{width:100%;aspect-ratio:16/10;position:relative}
+  .pg-media>span{font-size:72px}
+  .pg-txt h4{font-family:var(--display);font-size:clamp(34px,4vw,56px);line-height:.92;
+      text-transform:uppercase;transition:color .25s;margin-bottom:10px}
+  .pg-txt p{font-family:var(--mono);font-size:12px;letter-spacing:.05em;text-transform:uppercase;
+      color:rgba(0,0,0,.55);line-height:1.6;max-width:520px}
+  .pg-row{display:flex;align-items:center;gap:26px;margin-top:16px}
+  .pg-price{font-family:var(--display);font-size:24px;text-transform:uppercase;white-space:nowrap}
+  .pg-go{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+      transition:transform .3s,color .25s}
+  .pg-item:hover .pg-txt h4{color:#0054fa}
+  .pg-item:hover .pg-go{transform:translateX(6px);color:#0054fa}
+  .pg-item:hover .pg-media>.gf-t,.pg-item:hover .pg-media>.gf-b{transform:scaleX(1)}
+  .pg-item:hover .pg-media>.gf-l,.pg-item:hover .pg-media>.gf-r{transform:scaleY(1)}
   .pg-empty{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;
       color:rgba(0,0,0,.5);padding:34px 0}
 
   /* ---------- tienda ---------- */
   .st-sub{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
-      color:#0244f5;margin:40px 0 16px}
+      color:#0244f5;margin:0 0 16px}
+  .st-sub+.st-pinned{margin-bottom:44px}
   .st-pinned,.pg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:24px}
   .st-card{background:#fff;cursor:pointer;display:flex;flex-direction:column}
   .st-thumb{aspect-ratio:4/3}
@@ -456,7 +465,7 @@
   .st-f.on{background:#000;color:#fff}
 
   /* ---------- login ---------- */
-  .lg-box{max-width:430px;margin:8vh auto 0;display:flex;flex-direction:column;gap:14px}
+  .lg-box{max-width:430px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
   .lg-box input{height:54px;border:2px solid #000;border-radius:0;padding:0 16px;font-size:16px;
       background:#fff;font-family:var(--mono)}
   .lg-box input:focus{outline:2px solid #0244f5;outline-offset:2px}
@@ -505,7 +514,9 @@
   .ad-msg{padding:10px 20px;font-family:var(--mono);font-size:12px;min-height:34px}
 
   @media (max-width:1100px){
-    #page-root{padding:0 18px 70px}
+    .pg-hero{padding:140px 18px 50px}
+    .pg-body{padding:44px 18px 90px}
+    .pg-item{grid-template-columns:1fr;gap:18px}
     :root{--pad:24px}
     .links{display:none}
     .title{font-size:52px}
@@ -527,7 +538,7 @@
 <canvas id="bg"></canvas>
 
     <nav class="nav" id="nav">
-  <div class="logo">GUF CORPORATION</div>
+  <a class="logo" href="/">GUF CORPORATION</a>
   <div class="links">
     <a href="#" data-menu="asesorias">Asesorías</a>
     <a href="#" data-menu="descuentos">Descuentos</a>
@@ -535,59 +546,6 @@
     <a href="#" data-menu="productos">Productos</a>
   </div>
 </nav>
-
-<!-- menús desplegables (estructura medida en la referencia) -->
-<div class="menu" data-panel="asesorias">
-  <div class="mword">Asesorías</div>
-  <div class="mcols">
-    <div class="mgroup">
-      <h4><a href="#/asesorias">Personalizadas</a></h4>
-      <div class="row">
-        <a class="mbtn" href="#/asesorias">Ver más</a>
-        <a class="mbtn ghost" href="#/asesorias">Agendar</a>
-      </div>
-      <a class="mlink" href="#/asesorias">Preguntas frecuentes</a>
-    </div>
-    <div class="mgroup">
-      <h4><a href="#/asesorias">Servicios</a></h4>
-      <a class="mbtn" href="#/asesorias">Ver todos</a>
-    </div>
-    <div class="mgroup">
-      <h4><a href="#/asesorias">Planes</a></h4>
-      <a class="mbtn" href="#/asesorias">Ver todos</a>
-    </div>
-  </div>
-</div>
-<div class="menu" data-panel="descuentos">
-  <div class="mword">Descuentos</div>
-  <div class="mcols">
-    <div class="mgroup">
-      <h4><a href="#/descuentos">Ofertas del mes</a></h4>
-      <a class="mbtn" href="#/descuentos">Ver ofertas</a>
-    </div>
-  </div>
-</div>
-<div class="menu" data-panel="cuentas">
-  <div class="mword">Cuentas</div>
-  <div class="mcols">
-    <div class="mgroup list">
-      <a class="big" href="#/cuentas">Streaming</a>
-      <a class="big" href="#/cuentas">Gaming</a>
-      <a class="big" href="#/cuentas">Software</a>
-      <a class="big" href="#/cuentas">Educación</a>
-    </div>
-  </div>
-</div>
-<div class="menu" data-panel="productos">
-  <div class="mword">Productos</div>
-  <div class="mcols">
-    <div class="mgroup">
-      <h4><a href="#/productos">Catálogo</a></h4>
-      <a class="mbtn" href="#/productos">Ver todos</a>
-    </div>
-  </div>
-</div>
-
 
 <!-- ============================ HERO ============================ -->
 <section id="hero">

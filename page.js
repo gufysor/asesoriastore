@@ -7,7 +7,7 @@ import { APP, CONTENT, SLIDES, slideArt, lerp, clamp } from './core.js';
 import { drawBG } from './bg.js';
 import { drawHero, S as HERO } from './hero.js';
 import { drawFooter } from './footer.js';
-import { openModal, openProduct, waLink, buyMsg } from './ui.js';
+import { openModal, openProduct, waLink, buyMsg, go } from './ui.js';
 import './admin.js';
 
 /* ------------------------------------------------------------ marca */
@@ -45,8 +45,14 @@ const bodyPs = document.querySelectorAll('.spot .body p');
 const ctas = document.querySelectorAll('.spotcol .cta .pill');
 if (ctas[0]) {
   ctas[0].textContent = SPOT.btn1 || 'Consultar';
-  ctas[0].href = waLink(`Hola ${CONTENT.brand} 👋, quiero orientación en derecho sobre mi caso.`);
-  ctas[0].target = '_blank';
+  // sin WhatsApp directo: abre la ventana del servicio (ahí está el botón)
+  ctas[0].addEventListener('click', e => {
+    e.preventDefault();
+    openModal({
+      name: SPOT.title || 'Orientación en derecho', cat: 'DERECHO',
+      desc: SPOT.p1 || '', buyLabel: 'Consultar por WhatsApp',
+    });
+  });
 }
 if (ctas[1]) {
   ctas[1].textContent = SPOT.btn2 || 'Cómo trabajamos';
@@ -118,37 +124,30 @@ document.querySelectorAll('.bgcard .inner').forEach((inner, i) => {
   inner.appendChild(img);
 });
 
-/* ------------------------------------------------------------ menús del nav
-   Hover: abre el panel desplegable. Click: va a la página dedicada. */
+/* ------------------------------------------------------------ nav
+   Sin menús desplegables: cada item navega a su página real (/asesorias…). */
 const navEl = document.getElementById('nav');
 const navLinks = [...document.querySelectorAll('.links a[data-menu]')];
-const panels = [...document.querySelectorAll('.menu')];
-let openMenu = null, menuTimer = null;
 
 function updateNavBg() {
-  if (openMenu) { navEl.style.backgroundColor = '#0244f5'; return; }
+  if (document.body.classList.contains('page-open')) {
+    navEl.style.backgroundColor = '#000';
+    navEl.classList.remove('hidden');
+    return;
+  }
   const a = clamp(scrollY / 700, 0, 1);
   navEl.style.backgroundColor = `rgba(0,0,0,${a.toFixed(3)})`;
 }
-function setMenu(name) {
-  openMenu = name;
-  document.body.classList.toggle('menu-open', !!name);
-  navEl.classList.toggle('open', !!name);
-  navLinks.forEach(a => a.classList.toggle('active', a.dataset.menu === name));
-  panels.forEach(p => p.classList.toggle('on', p.dataset.panel === name));
-  updateNavBg();
-}
 updateNavBg();
+document.addEventListener('guf-route', () => {
+  navLinks.forEach(a => a.classList.toggle('active',
+    location.pathname === '/' + a.dataset.menu));
+  updateNavBg();
+});
 navLinks.forEach(a => {
-  a.addEventListener('mouseenter', () => { clearTimeout(menuTimer); setMenu(a.dataset.menu); });
-  a.addEventListener('mouseleave', () => { menuTimer = setTimeout(() => setMenu(null), 350); });
-  a.addEventListener('click', e => { e.preventDefault(); setMenu(null); location.hash = '#/' + a.dataset.menu; });
+  a.href = '/' + a.dataset.menu;
+  a.addEventListener('click', e => { e.preventDefault(); go('/' + a.dataset.menu); });
 });
-panels.forEach(p => {
-  p.addEventListener('mouseenter', () => clearTimeout(menuTimer));
-  p.addEventListener('mouseleave', () => { menuTimer = setTimeout(() => setMenu(null), 350); });
-});
-addEventListener('keydown', e => { if (e.key === 'Escape') setMenu(null); });
 
 /* ------------------------------------------------------------ franja del footer */
 const stripImg = document.getElementById('strip-img');
@@ -249,7 +248,7 @@ function onScroll() {
   APP.scroll = scrollY;
   APP.heroProgress = clamp(scrollY / innerHeight, 0, 1);
   const dy = scrollY - lastNavY;
-  if (openMenu || scrollY <= 120 || dy < -2) navEl.classList.remove('hidden');
+  if (scrollY <= 120 || dy < -2) navEl.classList.remove('hidden');
   else if (dy > 2) navEl.classList.add('hidden');
   lastNavY = scrollY;
   updateNavBg();
