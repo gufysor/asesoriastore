@@ -10,14 +10,36 @@ export const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 export const easeInOut = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 export const easeOut = t => 1 - Math.pow(1 - t, 3);
 
-/* ---- slides: colores del degradado medidos de uColor1/uColor2 en reposo ---- */
-export const SLIDES = [
-  { name: 'APECHURCH',      cat: 'GAMES',                 desc: 'Fully decentralized, non-custodial gaming hub built on GUF Corporation.', c1: '#a37a1f', c2: '#26610d' },
-  { name: 'OPENSEA',        cat: 'COLLECTIBLES, FINANCE', desc: 'An NFT marketplace, and now supports token trading.',             c1: '#ffffff', c2: '#0086ff' },
-  { name: 'CLUTCH MARKETS', cat: 'GAMES, FINANCE',        desc: 'Decentralized parlay platform on GUF Corporation.',                      c1: '#1a4910', c2: '#488434' },
-  { name: 'OTHERSIDE',      cat: 'GAMES',                 desc: 'Web3-enabled virtual worlds on GUF Corporation.',                        c1: '#568d9f', c2: '#3e6674' },
-  { name: 'APE EXPRESS',    cat: 'FINANCE',               desc: 'The ultimate launchpad experience on GUF Corporation.',                  c1: '#02224c', c2: '#bb1001' },
-];
+/* =====================================================================
+   CONTENIDO EDITABLE — se carga de /api/data (servidor con API) o de
+   ./data.json (hosting estático). El admin lo edita desde /#/login.
+   Top-level await: todos los módulos que importan core esperan a que el
+   contenido esté listo antes de arrancar.
+   ===================================================================== */
+const FALLBACK = {
+  brand: 'GUF CORPORATION', whatsapp: '51935090264',
+  heroSlides: [
+    { name: 'ASESORÍAS',     cat: 'INGENIERÍA · EXÁMENES', desc: 'Asesorías de cursos de ingeniería y resolución de exámenes.', c1: '#a37a1f', c2: '#26610d' },
+    { name: 'DESCUENTOS',    cat: 'AMAZON · VUELOS',       desc: 'Descuentos en productos de Amazon y en vuelos.',              c1: '#ffffff', c2: '#0086ff' },
+    { name: 'CUENTAS',       cat: 'STREAMING · IA',        desc: 'Cuentas de streaming y de ChatGPT o Gemini.',                 c1: '#1a4910', c2: '#488434' },
+    { name: 'PRODUCTOS',     cat: 'TIENDA',                desc: 'Productos varios con descuentos especiales.',                 c1: '#568d9f', c2: '#3e6674' },
+    { name: 'PERSONALIZADOS',cat: 'A TU MEDIDA',           desc: 'Productos y servicios personalizados.',                       c1: '#02224c', c2: '#bb1001' },
+  ],
+  products: [], pages: {}, marquee: ['GUF CORPORATION'], footer: {}, spotlight: {},
+};
+async function loadContent() {
+  for (const u of ['/api/data', './data.json']) {
+    try {
+      const r = await fetch(u, { cache: 'no-store' });
+      if (r.ok) { const d = await r.json(); if (d && d.heroSlides) { delete d.adminPass; return d; } }
+    } catch (e) { /* siguiente origen */ }
+  }
+  return FALLBACK;
+}
+export const CONTENT = await loadContent();
+
+/* slides del hero desde el contenido (colores del degradado por slide) */
+export const SLIDES = CONTENT.heroSlides.map(s => ({ name: s.name, cat: s.cat, desc: s.desc, c1: s.c1, c2: s.c2 }));
 
 /* estado compartido entre módulos (el fondo fijo necesita el color del slide
    activo del hero, y el footer necesita el cursor) */

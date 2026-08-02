@@ -1,15 +1,19 @@
 /* =====================================================================
    page.js — comportamientos DOM + bucle maestro de render.
-     · preloader
-     · marquesinas scroll-driven  (medido: ≈ −0.85 px por px de scroll,
-       con suavizado; de ahí el jitter en las mediciones)
-     · grid de apps con desborde horizontal y arrastre
-     · reveals al entrar en viewport
+   Todo el contenido visible sale de CONTENT (data.json), editable por el
+   administrador desde /#/login.
    ===================================================================== */
-import { APP, SLIDES, slideArt, lerp, clamp } from './core.js';
+import { APP, CONTENT, SLIDES, slideArt, lerp, clamp } from './core.js';
 import { drawBG } from './bg.js';
 import { drawHero, S as HERO } from './hero.js';
 import { drawFooter } from './footer.js';
+import { openModal, openProduct, waLink, buyMsg } from './ui.js';
+import './admin.js';
+
+/* ------------------------------------------------------------ marca */
+document.title = CONTENT.brand;
+const logo = document.querySelector('.logo');
+if (logo) logo.textContent = CONTENT.brand;
 
 /* ------------------------------------------------------------ preloader */
 const pre = document.getElementById('pre');
@@ -24,68 +28,89 @@ const fontsReady = document.fonts && document.fonts.ready ? document.fonts.ready
 Promise.all([fontsReady, new Promise(r => setTimeout(r, 1400))]).then(dismissPre);
 setTimeout(dismissPre, 5000);   // red de seguridad
 
-/* ------------------------------------------------------------ apps del grid */
-/* orden medido en la referencia (flujo por columnas, destacada 2×2 en medio) */
-const APPS = [
-  { name: 'OTHERSIDE',      cat: 'GAMES',                 desc: 'Web3-enabled virtual worlds on GUF Corporation' },
-  { name: 'CAMELOT',        cat: 'FINANCE',               desc: 'Decentralized exchange' },
-  { name: 'MADE BY APES',   cat: 'INTELLECTUAL PROPERTY', desc: 'A club full of builders' },
-  { name: 'APE PORTAL',     cat: 'INFRASTRUCTURE',        desc: 'Get on GUF Corporation' },
-  { name: 'BLEVER',         cat: 'COLLECTIBLES',          desc: 'An NFT launchpad for GUF Corporation', feature: true },
-  { name: 'APE EXPRESS',    cat: 'FINANCE',               desc: 'The ultimate launchpad experience' },
-  { name: 'CLUTCH MARKETS', cat: 'GAMES, FINANCE',        desc: 'Decentralized parlay platform' },
-  { name: 'APESCAN',        cat: 'INFRASTRUCTURE',        desc: 'The GUF Corporation block explorer' },
-  { name: 'GTRADE',         cat: 'FINANCE',               desc: 'Decentralized leveraged trading' },
-  { name: 'OPENOCEAN',      cat: 'FINANCE',               desc: 'DEX aggregator on GUF Corporation' },
-  { name: 'CYAN',           cat: 'FINANCE',               desc: 'BNPL for NFTs' },
-  { name: 'MINTPAD',        cat: 'COLLECTIBLES',          desc: 'Create and mint on GUF Corporation' },
-];
+/* ------------------------------------------------------------ hero → modal */
+document.querySelector('.launch')?.addEventListener('click', () => {
+  const s = SLIDES[HERO.index];
+  openModal({ name: s.name, cat: s.cat, desc: s.desc, buyLabel: 'Consultar por WhatsApp' });
+});
 
+/* ------------------------------------------------------------ sección Derecho */
+const SPOT = CONTENT.spotlight || {};
+const put = (sel, txt) => { const e = document.querySelector(sel); if (e && txt) e.textContent = txt; };
+put('.lockup b', SPOT.lockup1 || CONTENT.brand);
+put('.lockup i', SPOT.lockup2);
+put('.spot h2', SPOT.title);
+const bodyPs = document.querySelectorAll('.spot .body p');
+[SPOT.p1, SPOT.p2, SPOT.p3].forEach((t, i) => { if (bodyPs[i] && t) bodyPs[i].innerHTML = i === 2 ? `<strong></strong>` : ''; if (bodyPs[i] && t) (i === 2 ? bodyPs[i].querySelector('strong') : bodyPs[i]).textContent = t; });
+const ctas = document.querySelectorAll('.spotcol .cta .pill');
+if (ctas[0]) {
+  ctas[0].textContent = SPOT.btn1 || 'Consultar';
+  ctas[0].href = waLink(`Hola ${CONTENT.brand} 👋, quiero orientación en derecho sobre mi caso.`);
+  ctas[0].target = '_blank';
+}
+if (ctas[1]) {
+  ctas[1].textContent = SPOT.btn2 || 'Cómo trabajamos';
+  ctas[1].addEventListener('click', e => {
+    e.preventDefault();
+    openModal({
+      name: SPOT.title || 'Orientación en derecho', cat: 'DERECHO',
+      desc: `${SPOT.p1 || ''}\n\n${SPOT.p2 || ''}`, buyLabel: 'Consultar por WhatsApp',
+    });
+  });
+}
+/* producto individual al costado (elegible por el admin) */
+const spotProd = (CONTENT.products || []).find(p => p.id === SPOT.productId) || (CONTENT.products || [])[0];
+if (spotProd) {
+  put('.spotmeta h3', spotProd.name);
+  put('.spotmeta p', spotProd.desc);
+  const b = document.querySelector('.spotmeta .pill');
+  if (b) { b.textContent = 'Ver producto'; b.addEventListener('click', e => { e.preventDefault(); openProduct(spotProd); }); }
+  document.querySelector('.spotcard')?.addEventListener('click', () => openProduct(spotProd));
+}
+
+/* ------------------------------------------------------------ destacados */
+const FEATURED = (CONTENT.products || []).filter(p => p.featured);
 const grid = document.getElementById('appgrid');
-APPS.forEach((a, i) => {
+FEATURED.forEach((p, i) => {
   const el = document.createElement('a');
   el.href = '#';
-  el.className = 'appcard' + (a.feature ? ' feature' : '');
-  const art = slideArt(i % SLIDES.length, a.feature ? 900 : 560);
+  el.className = 'appcard' + (i === 0 ? ' feature' : '');
+  const art = slideArt(i % SLIDES.length, i === 0 ? 900 : 560);
   el.innerHTML = `
-    <span class="appcat">${a.cat}</span>
+    <span class="appcat">${p.cat}</span>
     <span class="appmeta">
-      <span class="appname">${a.name}</span>
-      <span class="appdesc">${a.desc}</span>
+      <span class="appname">${p.name}</span>
+      <span class="appdesc">${p.price || ''}</span>
     </span>
     <i class="bt"></i><i class="br"></i><i class="bb"></i><i class="bl"></i>`;
-  el.style.backgroundImage = `url(${art.toDataURL('image/jpeg', 0.86)})`;
+  el.style.backgroundImage = p.img ? `url(${p.img})` : `url(${art.toDataURL('image/jpeg', 0.86)})`;
+  el.addEventListener('click', e => { e.preventDefault(); if (Math.abs(grid.scrollLeft - gL) <= 6) openProduct(p); });
   grid.appendChild(el);
 });
 
-/* arrastre horizontal del grid (desborda a la derecha, como la referencia) */
+/* arrastre horizontal del grid */
 let gDrag = false, gX = 0, gL = 0;
 grid.addEventListener('pointerdown', e => { gDrag = true; gX = e.clientX; gL = grid.scrollLeft; grid.setPointerCapture(e.pointerId); grid.classList.add('grabbing'); });
 grid.addEventListener('pointermove', e => { if (gDrag) grid.scrollLeft = gL - (e.clientX - gX); });
 const endDrag = () => { gDrag = false; grid.classList.remove('grabbing'); };
 grid.addEventListener('pointerup', endDrag);
 grid.addEventListener('pointercancel', endDrag);
-grid.addEventListener('click', e => { if (Math.abs(grid.scrollLeft - gL) > 6) e.preventDefault(); });
 
 /* ------------------------------------------------------------ background cards */
 document.querySelectorAll('.bgcard .inner').forEach((inner, i) => {
   const img = new Image();
   img.alt = '';
-  // arte sin marco ni número: si no, el rectángulo lee como un bloque duro
   img.src = slideArt([3, 1][i] ?? i, 620, true).toDataURL('image/jpeg', 0.85);
   inner.appendChild(img);
 });
 
 /* ------------------------------------------------------------ menús del nav
-   Medido: cada item abre un panel azul a ancho completo bajo el nav; el resto
-   de la página queda tras el velo blur(60px). Click en el mismo item, fuera
-   del panel o Escape lo cierra. */
+   Hover: abre el panel desplegable. Click: va a la página dedicada. */
 const navEl = document.getElementById('nav');
 const navLinks = [...document.querySelectorAll('.links a[data-menu]')];
 const panels = [...document.querySelectorAll('.menu')];
-let openMenu = null;
+let openMenu = null, menuTimer = null;
 
-/* fondo del nav: transparente sobre el hero → negro al bajar; azul con menú */
 function updateNavBg() {
   if (openMenu) { navEl.style.backgroundColor = '#0244f5'; return; }
   const a = clamp(scrollY / 700, 0, 1);
@@ -100,22 +125,18 @@ function setMenu(name) {
   updateNavBg();
 }
 updateNavBg();
-navLinks.forEach(a => a.addEventListener('click', e => {
-  e.preventDefault();
-  setMenu(a.dataset.menu === openMenu ? null : a.dataset.menu);
-}));
-addEventListener('keydown', e => { if (e.key === 'Escape') setMenu(null); });
-addEventListener('pointerdown', e => {
-  if (openMenu && !e.target.closest('.menu') && !e.target.closest('.links')) setMenu(null);
+navLinks.forEach(a => {
+  a.addEventListener('mouseenter', () => { clearTimeout(menuTimer); setMenu(a.dataset.menu); });
+  a.addEventListener('mouseleave', () => { menuTimer = setTimeout(() => setMenu(null), 350); });
+  a.addEventListener('click', e => { e.preventDefault(); setMenu(null); location.hash = '#/' + a.dataset.menu; });
 });
+panels.forEach(p => {
+  p.addEventListener('mouseenter', () => clearTimeout(menuTimer));
+  p.addEventListener('mouseleave', () => { menuTimer = setTimeout(() => setMenu(null), 350); });
+});
+addEventListener('keydown', e => { if (e.key === 'Escape') setMenu(null); });
 
-/* ------------------------------------------------------------ visual del spotlight */
-const shot = document.getElementById('spot-shot');
-if (shot) shot.src = slideArt(2, 1100).toDataURL('image/jpeg', 0.9);
-
-/* ------------------------------------------------------------ franja del footer
-   La referencia usa UNA sola imagen ancha (footer-bg.webp, 1425×259): un collage
-   de vallas/escenas. La compongo como tira única con paneles de la paleta. */
+/* ------------------------------------------------------------ franja del footer */
 const stripImg = document.getElementById('strip-img');
 if (stripImg) {
   const c = document.createElement('canvas'); c.width = 2850; c.height = 518;
@@ -126,7 +147,7 @@ if (stripImg) {
     const art = slideArt(i % SLIDES.length, 480, true);
     x.save();
     x.translate(px + w / 2, c.height / 2);
-    x.transform(1, (i % 2 ? -1 : 1) * 0.045, 0, 1, 0, 0);   // leve cizalla alterna
+    x.transform(1, (i % 2 ? -1 : 1) * 0.045, 0, 1, 0, 0);
     x.drawImage(art, -w / 2, -c.height / 2 - 20, w, c.height + 40);
     x.restore();
     px += w - 8; i++;
@@ -137,56 +158,87 @@ if (stripImg) {
   stripImg.src = c.toDataURL('image/jpeg', 0.85);
 }
 
+/* ------------------------------------------------------------ footer dinámico */
+const F = CONTENT.footer || {};
+const fcols = document.querySelectorAll('.fcol');
+[['col1', 0], ['col2', 1], ['col3', 2]].forEach(([k, i]) => {
+  const col = fcols[i]; if (!col) return;
+  const t = F[k + 'Title'], links = F[k + 'Links'] || [];
+  if (t) col.querySelector('h3').textContent = t;
+  if (links.length) {
+    col.querySelectorAll('a').forEach(a => a.remove());
+    links.forEach(txt => {
+      const a = document.createElement('a');
+      a.textContent = txt;
+      const low = txt.toLowerCase();
+      if (/whatsapp|\+51/.test(low)) { a.href = waLink(`Hola ${CONTENT.brand} 👋, quiero información.`); a.target = '_blank'; }
+      else if (/asesor/.test(low)) a.href = '#/asesorias';
+      else if (/descuento/.test(low)) a.href = '#/descuentos';
+      else if (/cuenta/.test(low)) a.href = '#/cuentas';
+      else if (/producto/.test(low)) a.href = '#/productos';
+      else {
+        a.href = '#';
+        a.addEventListener('click', e => {
+          e.preventDefault();
+          openModal({ name: txt, cat: F[k + 'Title'] || '', desc: `Escríbenos por WhatsApp y te contamos sobre "${txt}".`, buyLabel: 'Abrir WhatsApp' });
+        });
+      }
+      col.appendChild(a);
+    });
+  }
+});
+const legal = document.querySelector('.legal span');
+if (legal && F.legal) legal.textContent = F.legal;
+
 /* ------------------------------------------------------------ marquesinas */
-const CATS = ['FINANCE', 'INTELLECTUAL PROPERTY', 'COLLECTIBLES', 'GAMES', 'INFRASTRUCTURE'];
+const WORDS = (CONTENT.marquee || []).length ? CONTENT.marquee : ['GUF'];
 const rows = [...document.querySelectorAll('.mq-track')];
 rows.forEach((track, r) => {
   const items = [];
-  for (let k = 0; k < 14; k++) {
-    const cat = CATS[(k + r * 2) % CATS.length];
+  const n = Math.max(10, WORDS.length);
+  for (let k = 0; k < n; k++) {
+    const w = WORDS[(k + r * 3) % WORDS.length];
     const art = slideArt((k + r) % SLIDES.length, 190, true);
-    items.push(`<span class="mq-item"><span class="mq-word">${cat}</span><img class="mq-thumb" alt="" src="${art.toDataURL('image/jpeg', 0.8)}"></span>`);
+    items.push(`<span class="mq-item" data-w="${w}"><span class="mq-word">${w}</span><img class="mq-thumb" alt="" src="${art.toDataURL('image/jpeg', 0.8)}"></span>`);
   }
-  track.innerHTML = items.join('') + items.join('');   // duplicado para el bucle
+  track.innerHTML = items.join('') + items.join('');
   track.dataset.dir = r % 2 ? '1' : '-1';
+  track.querySelectorAll('.mq-item').forEach(el => el.addEventListener('click', () => {
+    openModal({
+      name: el.dataset.w, cat: 'GUF CORPORATION',
+      desc: `¿Buscas ${el.dataset.w.toLowerCase()}? Escríbenos y te ayudamos con eso.`,
+      buyLabel: 'Consultar por WhatsApp',
+    });
+  }));
 });
-
-/* Velocidad medida con el scroll CONGELADO en 2638: Δx = −94.1 px cada 513 ms,
-   perfectamente constante → 183 px/s. La cinta va por tiempo, no por scroll.
-   (Mi medición anterior confundía las dos cosas porque muestreaba con esperas
-   fijas mientras incrementaba el scroll de forma también fija.) */
+/* cinta por tiempo: 183 px/s medidos de la referencia */
 const MQ_SPEED = 183;
 let mqPos = rows.map(() => 0);
+
+/* botón browse → tienda */
+const browse = document.querySelector('.browse');
+if (browse) { browse.textContent = 'Ver todos los productos'; browse.href = '#/productos'; }
+const seeall = document.querySelector('.seeall');
+if (seeall) seeall.href = '#/productos';
+const headLink = document.querySelector('.apps .head a');
+if (headLink) headLink.href = '#/productos';
 
 /* ------------------------------------------------------------ reveals */
 const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); }), { threshold: 0.12 });
 document.querySelectorAll('.reveal').forEach(e => io.observe(e));
 
 /* ------------------------------------------------------------ scroll */
-/* BackgroundCard: cards decorativas grandes con rotación 3D anidada, detrás del
-   contenido. Medido en la referencia:
-     · izquierda → opacidad 0.2, rotateY scroll-driven de +4.88° a −6.29°
-       entre scrollY 300 y 1000  (≈ −0.016°/px)
-     · derecha   → opacidad 0.4, rotateY fija en 25°
-     · wrapper interno de ambas → rotateY fija ≈ 15.2°
-   El difuminado lo consigo con opacidad baja + blur; en la referencia no había
-   filtro blur declarado, así que esta parte iguala el aspecto, no el mecanismo. */
 const bgLeft = document.querySelector('.bgcard.left');
 const bgRight = document.querySelector('.bgcard.right');
-
 let lastNavY = 0;
 function onScroll() {
   APP.scroll = scrollY;
   APP.heroProgress = clamp(scrollY / innerHeight, 0, 1);
-  /* nav: se oculta bajando, reaparece subiendo (o cerca del top / con menú) */
   const dy = scrollY - lastNavY;
   if (openMenu || scrollY <= 120 || dy < -2) navEl.classList.remove('hidden');
   else if (dy > 2) navEl.classList.add('hidden');
   lastNavY = scrollY;
   updateNavBg();
-  /* parallax medido: la card izquierda sube 0.226 px por px de scroll y la
-     derecha 0.129. La rotateY de la izquierda va de +4.88° a −6.29° entre
-     scrollY 300 y 1000; la de la derecha es fija en 25°. */
   if (bgLeft) {
     const deg = clamp(4.88 - (scrollY - 300) * 0.01596, -12, 10);
     bgLeft.style.transform =
@@ -205,12 +257,9 @@ onScroll();
 let prev = performance.now();
 function frame(now) {
   const dt = Math.min(0.05, (now - prev) / 1000); prev = now;
-
   drawBG(now);
   drawHero(now);
   drawFooter(now);
-
-  // marquesinas: velocidad constante por tiempo, sin relación con el scroll
   for (let i = 0; i < rows.length; i++) {
     const span = rows[i].scrollWidth / 2 || 1;
     mqPos[i] = (mqPos[i] + (+rows[i].dataset.dir) * MQ_SPEED * dt) % span;

@@ -1,0 +1,263 @@
+{
+  "brand": "GUF CORPORATION",
+  "whatsapp": "51935090264",
+  "heroSlides": [
+    {
+      "name": "ASESORÍAS",
+      "cat": "INGENIERÍA · EXÁMENES",
+      "desc": "Asesorías de cursos de ingeniería y resolución de exámenes.",
+      "c1": "#a37a1f",
+      "c2": "#26610d"
+    },
+    {
+      "name": "DESCUENTOS",
+      "cat": "AMAZON · VUELOS",
+      "desc": "Descuentos en productos de Amazon y descuentos en vuelos.",
+      "c1": "#ffffff",
+      "c2": "#0086ff"
+    },
+    {
+      "name": "CUENTAS",
+      "cat": "STREAMING · IA",
+      "desc": "Cuentas de streaming y de ChatGPT o Gemini.",
+      "c1": "#1a4910",
+      "c2": "#488434"
+    },
+    {
+      "name": "PRODUCTOS",
+      "cat": "TIENDA",
+      "desc": "Productos varios con descuentos especiales.",
+      "c1": "#568d9f",
+      "c2": "#3e6674"
+    },
+    {
+      "name": "PERSONALIZADOS",
+      "cat": "A TU MEDIDA",
+      "desc": "Productos y servicios personalizados para lo que necesites.",
+      "c1": "#02224c",
+      "c2": "#bb1001"
+    }
+  ],
+  "spotlight": {
+    "lockup1": "GUF CORPORATION",
+    "lockup2": "DERECHO",
+    "title": "Orientación en derecho y casos reales",
+    "p1": "Te orientamos en temas legales con lenguaje claro: laboral, civil, contratos, reclamos y trámites. Analizamos tu situación y te decimos qué opciones tienes y por dónde empezar.",
+    "p2": "Trabajamos sobre casos reales: revisamos documentos, preparamos escritos y te acompañamos en cada paso del proceso para que tomes decisiones informadas.",
+    "p3": "Directo, confidencial y sin enredos. ¿Conversamos sobre tu caso?",
+    "btn1": "Consultar mi caso",
+    "btn2": "Cómo trabajamos",
+    "productId": "p1"
+  },
+  "products": [
+    {
+      "id": "p1",
+      "name": "Asesoría de examen",
+      "cat": "Asesorías",
+      "tags": [
+        "ingeniería",
+        "exámenes"
+      ],
+      "price": "desde S/ 30",
+      "desc": "Resolución y asesoría de exámenes de cursos de ingeniería: cálculo, física, estática, y más. Cuéntanos tu curso y fecha.",
+      "pinned": true,
+      "featured": true,
+      "img": ""
+    },
+    {
+      "id": "p2",
+      "name": "Cuenta ChatGPT Plus",
+      "cat": "Cuentas",
+      "tags": [
+        "ia",
+        "chatgpt"
+      ],
+      "price": "S/ 25 / mes",
+      "desc": "Acceso a ChatGPT Plus (GPT actual) en cuenta compartida o privada. Entrega el mismo día.",
+      "pinned": true,
+      "featured": true,
+      "img": ""
+    },
+    {
+      "id": "p3",
+      "name": "Netflix 1 mes",
+      "cat": "Cuentas",
+      "tags": [
+        "streaming"
+      ],
+      "price": "S/ 12",
+      "desc": "Perfil de Netflix por 30 días, con garantía. Renovable cada mes.",
+      "pinned": true,
+      "featured": true,
+      "img": ""
+    },
+    {
+      "id": "p4",
+      "name": "Descuento Amazon",
+      "cat": "Descuentos",
+      "tags": [
+        "amazon",
+        "compras"
+      ],
+      "price": "según producto",
+      "desc": "Conseguimos descuentos en productos de Amazon y te los traemos. Pásanos el link del producto que quieres.",
+      "pinned": true,
+      "featured": true,
+      "img": ""
+    },
+    {
+      "id": "p5",
+      "name": "Vuelos con descuento",
+      "cat": "Descuentos",
+      "tags": [
+        "viajes",
+        "vuelos"
+      ],
+      "price": "según ruta",
+      "desc": "Buscamos y conseguimos tarifas con descuento para tus vuelos nacionales e internacionales.",
+      "pinned": false,
+      "featured": true,
+      "img": ""
+    },
+    {
+      "id": "p6",
+      "name": "Cuenta Gemini Advanced",
+      "cat": "Cuentas",
+      "tags": [
+        "ia",
+        "gemini"
+      ],
+      "price": "S/ 25 / mes",
+      "desc": "Acceso a Gemini Advanced de Google. Entrega rápida y soporte.",
+      "pinned": false,
+      "featured": true,
+      "img": ""
+    },
+    {
+      "id": "p7",
+      "name": "Disney+ 1 mes",
+      "cat": "Cuentas",
+      "tags": [
+        "streaming"
+      ],
+      "price": "S/ 10",
+      "desc": "Perfil de Disney+ por 30 días con garantía.",
+      "pinned": false,
+      "featured": true,
+      "img": ""
+    },
+    {
+      "id": "p8",
+      "name": "Pedido personalizado",
+      "cat": "Personalizados",
+      "tags": [
+        "a medida"
+      ],
+      "price": "cotizamos",
+      "desc": "¿Necesitas algo que no está en la tienda? Cuéntanos qué buscas y te lo cotizamos: productos, servicios, trámites o encargos.",
+      "pinned": false,
+      "featured": true,
+      "img": ""
+    }
+  ],
+  "pages": {
+    "asesorias": {
+      "title": "Asesorías",
+      "intro": "Asesorías de cursos de ingeniería y resolución de exámenes. También orientación en derecho con casos reales.",
+      "items": [
+        {
+          "name": "Cursos de ingeniería",
+          "price": "desde S/ 30",
+          "desc": "Cálculo, física, estática, dinámica, y más. Clases y resolución paso a paso."
+        },
+        {
+          "name": "Resolución de exámenes",
+          "price": "desde S/ 30",
+          "desc": "Nos pasas tu examen o práctica y lo resolvemos contigo, con procedimiento explicado."
+        },
+        {
+          "name": "Orientación en derecho",
+          "price": "consulta gratis",
+          "desc": "Orientación legal en casos reales: laboral, civil, contratos y reclamos."
+        }
+      ]
+    },
+    "descuentos": {
+      "title": "Descuentos",
+      "intro": "Conseguimos precios más bajos por ti: productos de Amazon y pasajes de avión.",
+      "items": [
+        {
+          "name": "Productos de Amazon",
+          "price": "según producto",
+          "desc": "Pásanos el link del producto y te conseguimos descuento y traída."
+        },
+        {
+          "name": "Vuelos",
+          "price": "según ruta",
+          "desc": "Tarifas con descuento en vuelos nacionales e internacionales."
+        }
+      ]
+    },
+    "cuentas": {
+      "title": "Cuentas",
+      "intro": "Cuentas de streaming y de inteligencia artificial, con entrega el mismo día y garantía.",
+      "items": [
+        {
+          "name": "Netflix",
+          "price": "S/ 12 / mes",
+          "desc": "Perfil con garantía, renovable."
+        },
+        {
+          "name": "Disney+",
+          "price": "S/ 10 / mes",
+          "desc": "Perfil con garantía, renovable."
+        },
+        {
+          "name": "ChatGPT Plus",
+          "price": "S/ 25 / mes",
+          "desc": "Acceso a GPT actual, compartida o privada."
+        },
+        {
+          "name": "Gemini Advanced",
+          "price": "S/ 25 / mes",
+          "desc": "IA de Google con acceso completo."
+        }
+      ]
+    }
+  },
+  "marquee": [
+    "ASESORÍAS",
+    "EXÁMENES",
+    "INGENIERÍA",
+    "DERECHO",
+    "DESCUENTOS",
+    "AMAZON",
+    "VUELOS",
+    "STREAMING",
+    "CHATGPT",
+    "GEMINI",
+    "PERSONALIZADOS"
+  ],
+  "footer": {
+    "col1Title": "GUF Corporation",
+    "col1Links": [
+      "Asesorías",
+      "Descuentos",
+      "Cuentas",
+      "Productos"
+    ],
+    "col2Title": "Contacto",
+    "col2Links": [
+      "WhatsApp +51 935 090 264",
+      "asesoria.store"
+    ],
+    "col3Title": "Información",
+    "col3Links": [
+      "Cómo comprar",
+      "Garantías",
+      "Preguntas frecuentes"
+    ],
+    "legal": "© 2026 GUF Corporation — Todos los derechos reservados"
+  },
+  "adminPass": "gufadmin2026"
+}
