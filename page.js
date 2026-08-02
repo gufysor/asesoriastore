@@ -7,7 +7,7 @@ import { APP, CONTENT, SLIDES, slideArt, lerp, clamp } from './core.js';
 import { drawBG } from './bg.js';
 import { drawHero, S as HERO } from './hero.js';
 import { drawFooter } from './footer.js';
-import { openModal, openProduct, waLink, buyMsg, go } from './ui.js';
+import { openModal, openProduct, waLink, buyMsg, go, discountPct } from './ui.js';
 import './admin.js';
 
 /* ------------------------------------------------------------ marca */
@@ -93,12 +93,14 @@ FEATURED.forEach((p, i) => {
   const el = document.createElement('a');
   el.href = '#';
   el.className = 'appcard' + (i === 0 ? ' feature' : '');
+  const pct = discountPct(p);
   el.innerHTML = `
     ${p.img ? '' : `<span class="ph-i">${p.name.slice(0, 2)}</span>`}
     <span class="appcat">${p.cat}</span>
+    ${pct ? `<span class="st-badge appoff">-${pct}%</span>` : ''}
     <span class="appmeta">
       <span class="appname">${p.name}</span>
-      <span class="appdesc">${p.price || ''}</span>
+      <span class="appdesc">${p.price || ''}${pct ? ` · antes ${p.oldPrice}` : ''}</span>
     </span>
     <i class="bt"></i><i class="br"></i><i class="bb"></i><i class="bl"></i>`;
   // sin imagen: cuadrado plomo oscuro con inicial fantasma (texto blanco legible)
@@ -179,24 +181,27 @@ const fcols = document.querySelectorAll('.fcol');
   const t = F[k + 'Title'], links = F[k + 'Links'] || [];
   if (t) col.querySelector('h3').textContent = t;
   if (links.length) {
-    col.querySelectorAll('a').forEach(a => a.remove());
+    col.querySelectorAll('a, span.ftxt').forEach(a => a.remove());
     links.forEach(txt => {
-      const a = document.createElement('a');
-      a.textContent = txt;
-      const low = txt.toLowerCase();
-      if (/whatsapp|\+51/.test(low)) { a.href = waLink(`Hola ${CONTENT.brand} 👋, quiero información.`); a.target = '_blank'; }
-      else if (/asesor/.test(low)) a.href = '#/asesorias';
-      else if (/descuento/.test(low)) a.href = '#/descuentos';
-      else if (/cuenta/.test(low)) a.href = '#/cuentas';
-      else if (/producto/.test(low)) a.href = '#/productos';
-      else {
-        a.href = '#';
-        a.addEventListener('click', e => {
-          e.preventDefault();
-          openModal({ name: txt, cat: F[k + 'Title'] || '', desc: `Escríbenos por WhatsApp y te contamos sobre "${txt}".`, buyLabel: 'Abrir WhatsApp' });
-        });
+      /* formato "Texto|url" → enlace; texto con ruta conocida → página;
+         cualquier otro texto → informativo plano (sin click, sin WhatsApp) */
+      const [label, url] = txt.split('|').map(s => s.trim());
+      const low = label.toLowerCase();
+      let el;
+      if (url) {
+        el = document.createElement('a');
+        el.href = url;
+        if (/^http/.test(url)) { el.target = '_blank'; el.rel = 'noopener'; }
+      } else if (/asesor/.test(low)) { el = document.createElement('a'); el.href = '/asesorias'; }
+      else if (/descuento/.test(low)) { el = document.createElement('a'); el.href = '/descuentos'; }
+      else if (/cuenta/.test(low)) { el = document.createElement('a'); el.href = '/cuentas'; }
+      else if (/producto/.test(low)) { el = document.createElement('a'); el.href = '/productos'; }
+      else { el = document.createElement('span'); el.className = 'ftxt'; }
+      el.textContent = label;
+      if (el.tagName === 'A' && el.getAttribute('href')?.startsWith('/')) {
+        el.addEventListener('click', e => { e.preventDefault(); go(el.getAttribute('href')); });
       }
-      col.appendChild(a);
+      col.appendChild(el);
     });
   }
 });
@@ -216,25 +221,21 @@ rows.forEach((track, r) => {
   }
   track.innerHTML = items.join('') + items.join('');
   track.dataset.dir = r % 2 ? '1' : '-1';
-  track.querySelectorAll('.mq-item').forEach(el => el.addEventListener('click', () => {
-    openModal({
-      name: el.dataset.w, cat: 'GUF CORPORATION',
-      desc: `¿Buscas ${el.dataset.w.toLowerCase()}? Escríbenos y te ayudamos con eso.`,
-      buyLabel: 'Consultar por WhatsApp',
-    });
-  }));
+  /* la cinta es decorativa: el click no hace nada */
 });
 /* cinta por tiempo: 183 px/s medidos de la referencia */
 const MQ_SPEED = 183;
 let mqPos = rows.map(() => 0);
 
-/* botón browse → tienda */
-const browse = document.querySelector('.browse');
-if (browse) { browse.textContent = 'Ver todos los productos'; browse.href = '#/productos'; }
-const seeall = document.querySelector('.seeall');
-if (seeall) seeall.href = '#/productos';
-const headLink = document.querySelector('.apps .head a');
-if (headLink) headLink.href = '#/productos';
+/* botones hacia la tienda: navegación limpia, sin salto de scroll —
+   la página de Productos abre desde su propia cabecera */
+[['.browse', 'Ver todos los productos'], ['.seeall', null], ['.apps .head a', null]].forEach(([sel, txt]) => {
+  const el = document.querySelector(sel);
+  if (!el) return;
+  if (txt) el.textContent = txt;
+  el.href = '/productos';
+  el.addEventListener('click', e => { e.preventDefault(); go('/productos'); });
+});
 
 /* ------------------------------------------------------------ reveals */
 const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); }), { threshold: 0.12 });

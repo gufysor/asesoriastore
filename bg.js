@@ -6,14 +6,15 @@
 
    Medido:  ángulo = 90° − sin(t)·55°   ·   dither = hash(uv)·0.01
    ===================================================================== */
-import { APP, makeGL, program, buffer, attrib, lerp, clamp } from './core.js';
+import { APP, CONTENT, hex, makeGL, program, buffer, attrib, lerp, clamp } from './core.js';
 
-/* Paletas medidas hookeando uColor1/uColor2 contra el scroll en la referencia:
+/* Tramos del degradado según el scroll (estructura medida de la referencia):
      scroll 0        → colores del slide activo (vivos)
      scroll ≥ ~600   → #e1edfa / #e2f0ff  (el "blanco" del cuerpo de la página)
-     footer (~3400)  → #1c62ba / #0657ec  (azul propio del footer, fijo)       */
+     footer          → color propio, editable por el admin (footer.c1/c2)      */
 const PALE1 = [0.882, 0.929, 0.980], PALE2 = [0.886, 0.941, 1.000];
-const BLUE1 = [0.110, 0.384, 0.729], BLUE2 = [0.024, 0.341, 0.925];
+const BLUE1 = hex((CONTENT.footer || {}).c1 || '#3b1470');
+const BLUE2 = hex((CONTENT.footer || {}).c2 || '#7a29c9');
 const smooth = t => t * t * (3 - 2 * t);
 const mix3 = (a, b, t) => [lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2], b[2], t)];
 

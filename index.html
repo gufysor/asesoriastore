@@ -304,9 +304,9 @@
   .mq{overflow:hidden;height:196px;display:flex;align-items:center}
   .mq-track{display:flex;align-items:center;width:max-content;will-change:transform}
   .mq-item{display:flex;align-items:center;gap:34px;padding-right:34px}
-  /* negras en reposo; blancas al pasar el mouse */
+  /* negras en reposo; azules al pasar el mouse — decorativa, sin click */
   .mq-word{font-family:var(--display);font-size:88px;line-height:.95;text-transform:uppercase;
-           white-space:nowrap;color:#000;transition:color .25s ease;cursor:pointer}
+           white-space:nowrap;color:#000;transition:color .25s ease}
   .mq-item:hover .mq-word{color:#0054fa}
   .mq-thumb{width:94px;height:94px;border-radius:0;object-fit:cover;display:block}
   .browse{display:grid;place-items:center;margin:64px auto 0;height:42px;padding:0 30px;border-radius:16px;
@@ -358,8 +358,18 @@
   /* cuadrado plomo - placeholder de imagen */
   .ph{background:#d3dae4;box-shadow:inset 0 0 0 1px rgba(10,20,40,.07);
       display:grid;place-items:center;overflow:hidden}
-  .ph>span{font-family:var(--display);color:#a7b1c2;text-transform:uppercase;line-height:1;user-select:none}
+  .ph>span:not(.st-badge){font-family:var(--display);color:#a7b1c2;text-transform:uppercase;line-height:1;user-select:none}
   .ph>img{width:100%;height:100%;object-fit:cover}
+  /* etiqueta de descuento (ecommerce) y precio anterior tachado */
+  .st-badge{position:absolute;top:10px;left:10px;z-index:2;font-family:var(--mono);font-size:11.5px;
+      letter-spacing:.06em;background:#e8442e;color:#fff;padding:5px 9px;font-weight:500}
+  .appoff{top:14px;left:auto;right:14px}
+  .st-prices{display:flex;align-items:baseline;gap:8px}
+  .st-old,.m-old{font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:rgba(0,0,0,.42)}
+  .m-old{font-size:14px;margin-left:10px}
+  .fcol .ftxt{display:block;font-family:var(--mono);font-size:12px;line-height:14px;letter-spacing:.11em;
+      text-transform:uppercase;color:#fff;margin-bottom:16px;opacity:.6}
+
   /* variante oscura (cards con texto blanco encima: destacados y Derecho) */
   .ph-dark{background:#3a4150 !important}
   .ph-i{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none;
@@ -378,7 +388,7 @@
       cursor:pointer;font-size:15px;font-family:var(--mono)}
   .m-x:hover{background:#0244f5}
   .m-img{height:230px}
-  .m-img>span{font-size:110px}
+  .m-img>span:not(.st-badge){font-size:110px}
   .m-body{padding:26px 30px 30px}
   .m-cat{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#0244f5}
   .m-body h3{font-family:var(--display);font-size:52px;line-height:.92;text-transform:uppercase;margin:8px 0 10px}
@@ -422,7 +432,7 @@
       align-items:center;padding:36px 0;border-bottom:1px solid rgba(0,0,0,.16);cursor:pointer}
   .pg-item:first-child{border-top:1px solid rgba(0,0,0,.16)}
   .pg-media{width:100%;aspect-ratio:16/10;position:relative}
-  .pg-media>span{font-size:72px}
+  .pg-media>span:not(.st-badge){font-size:72px}
   .pg-txt h4{font-family:var(--display);font-size:clamp(34px,4vw,56px);line-height:.92;
       text-transform:uppercase;transition:color .25s;margin-bottom:10px}
   .pg-txt p{font-family:var(--mono);font-size:12px;letter-spacing:.05em;text-transform:uppercase;
@@ -445,7 +455,7 @@
   .st-pinned,.pg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:24px}
   .st-card{background:#fff;cursor:pointer;display:flex;flex-direction:column}
   .st-thumb{aspect-ratio:4/3}
-  .st-thumb>span{font-size:64px}
+  .st-thumb>span:not(.st-badge){font-size:64px}
   .st-meta{padding:14px 16px 16px;display:flex;flex-direction:column;gap:5px;flex:1}
   .st-cat{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#0244f5}
   .st-card h4{font-family:var(--display);font-size:27px;line-height:.95;text-transform:uppercase}

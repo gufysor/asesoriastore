@@ -84,8 +84,9 @@ function productRow(p, i) {
   return `<fieldset class="ad-card" data-prod="${i}"><legend>${esc(p.name) || 'Producto'}</legend>
     ${inp(p, 'name', 'Nombre')} ${inp(p, 'cat', 'Categoría')}
     ${inp(p, '_tags', 'Etiquetas (separadas por coma)')}
-    ${inp(p, 'price', 'Precio')} ${ta(p, 'desc', 'Descripción')}
-    ${inp(p, 'img', 'Imagen (URL, opcional)')}
+    ${inp(p, 'price', 'Precio actual')} ${inp(p, 'oldPrice', 'Precio anterior (opcional — muestra el % de descuento)')}
+    ${ta(p, 'desc', 'Descripción')}
+    ${inp(p, 'img', 'Foto (URL, opcional)')}
     <label class="ad-chk"><input type="checkbox" data-flag="pinned" ${p.pinned ? 'checked' : ''}> Fijado (top 4 de la tienda)</label>
     <label class="ad-chk"><input type="checkbox" data-flag="featured" ${p.featured ? 'checked' : ''}> Destacado (portada)</label>
     <button class="ad-del" data-del="${i}">Eliminar</button>
@@ -120,6 +121,7 @@ function pageItems(pg, key) {
     <div class="ad-sub">${(pg.items || []).map((it, j) => `
       <div class="ad-mini" data-pgit="${key}:${j}">
         ${inp(it, 'name', 'Nombre')} ${inp(it, 'price', 'Precio')} ${ta(it, 'desc', 'Descripción')}
+        ${inp(it, 'img', 'Foto (URL, opcional)')}
         <button class="ad-del" data-itdel="${key}:${j}">Eliminar</button>
       </div>`).join('')}
     </div>
@@ -156,6 +158,10 @@ function tabFooter(el) {
   const links = (k) => `<label class="ad-f"><span>Links (uno por línea)</span>
     <textarea data-links="${k}" rows="4">${esc((f[k] || []).join('\n'))}</textarea></label>`;
   el.innerHTML = `<h3>Footer — información de GUF</h3>
+    <p class="ad-note">Links: escribe "Texto|https://direccion" para que sea un enlace
+    (correo: "Texto|mailto:correo@gmail.com"). Un texto sin "|" queda como informativo, sin click.</p>
+    ${inp(f, 'c1', 'Color 1 del fondo del footer (hex)', '#3b1470')}
+    ${inp(f, 'c2', 'Color 2 del fondo del footer (hex)', '#7a29c9')}
     ${inp(f, 'col1Title', 'Columna 1 — título')} ${links('col1Links')}
     ${inp(f, 'col2Title', 'Columna 2 — título')} ${links('col2Links')}
     ${inp(f, 'col3Title', 'Columna 3 — título')} ${links('col3Links')}

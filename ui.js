@@ -29,21 +29,22 @@ function ensureModal() {
   return modalRoot;
 }
 export function closeModal() { if (modalRoot) modalRoot.classList.remove('on'); }
-export function openModal({ name, cat, tags = [], price, desc, img, buyLabel = 'Comprar por WhatsApp' }) {
+export function openModal({ name, cat, tags = [], price, oldPrice, desc, img, buyLabel = 'Comprar por WhatsApp' }) {
   const root = ensureModal();
+  const pct = discountPct({ price, oldPrice });
   const card = root.querySelector('.m-card');
   card.className = 'm-card gf gf-on';          // marco degradado completo = estado "elegido"
   card.innerHTML = `
     ${FRAME}
     <button class="m-x" aria-label="Cerrar">✕</button>
-    <div class="m-img ph">${img ? `<img src="${esc(img)}" alt="">` : `<span>${esc(name).slice(0, 2)}</span>`}</div>
+    <div class="m-img ph">${pct ? `<span class="st-badge">-${pct}%</span>` : ''}${img ? `<img src="${esc(img)}" alt="">` : `<span>${esc(name).slice(0, 2)}</span>`}</div>
     <div class="m-body">
       ${cat ? `<span class="m-cat">${esc(cat)}</span>` : ''}
       <h3>${esc(name)}</h3>
       ${tags.length ? `<div class="m-tags">${tags.map(t => `<i>${esc(t)}</i>`).join('')}</div>` : ''}
       <p>${esc(desc)}</p>
       <div class="m-foot">
-        ${price ? `<b class="m-price">${esc(price)}</b>` : ''}
+        <span>${price ? `<b class="m-price">${esc(price)}</b>` : ''}${pct ? `<s class="m-old">${esc(oldPrice)}</s>` : ''}</span>
         <a class="m-buy" target="_blank" rel="noopener" href="${waLink(buyMsg(name, price))}">${esc(buyLabel)}</a>
       </div>
     </div>`;
@@ -56,7 +57,14 @@ export const openProduct = p => openModal(p);
 const pageRoot = () => document.getElementById('page-root');
 const ROUTES = ['asesorias', 'descuentos', 'cuentas', 'productos', 'login'];
 /* acento de la cabecera por página (colores de los slides del hero) */
-const ACCENT = { asesorias: '#26610d', descuentos: '#0086ff', cuentas: '#488434', productos: '#3e6674', login: '#0244f5' };
+const ACCENT = { asesorias: '#26610d', descuentos: '#0086ff', cuentas: '#488434', productos: '#3e6674', login: '#7a29c9' };
+
+/* % de descuento calculado de precio anterior vs actual (si ambos son números) */
+const num = s => { const m = String(s || '').replace(',', '.').match(/(\d+(?:\.\d+)?)/); return m ? parseFloat(m[1]) : null; };
+export function discountPct(p) {
+  const a = num(p.oldPrice), b = num(p.price);
+  return (a && b && a > b) ? Math.round((1 - b / a) * 100) : null;
+}
 
 function heroBand(key, title, intro = '') {
   return `<div class="pg-hero" style="--pgc:${ACCENT[key] || '#0244f5'}">
@@ -87,14 +95,18 @@ function renderSimplePage(key) {
 }
 
 function productCard(p) {
+  const pct = discountPct(p);
   return `<article class="st-card gf" data-id="${esc(p.id)}">
     ${FRAME}
-    <div class="st-thumb ph">${p.img ? `<img src="${esc(p.img)}" alt="">` : `<span>${esc(p.name).slice(0, 2)}</span>`}</div>
+    <div class="st-thumb ph">${pct ? `<span class="st-badge">-${pct}%</span>` : ''}${p.img ? `<img src="${esc(p.img)}" alt="">` : `<span>${esc(p.name).slice(0, 2)}</span>`}</div>
     <div class="st-meta">
       <span class="st-cat">${esc(p.cat)}</span>
       <h4>${esc(p.name)}</h4>
       <div class="st-tags">${(p.tags || []).map(t => `<i>${esc(t)}</i>`).join('')}</div>
-      <div class="st-row"><b>${esc(p.price || '')}</b><span>Ver ▶</span></div>
+      <div class="st-row">
+        <span class="st-prices"><b>${esc(p.price || '')}</b>${pct ? `<s class="st-old">${esc(p.oldPrice)}</s>` : ''}</span>
+        <span>Ver ▶</span>
+      </div>
     </div>
   </article>`;
 }

@@ -7,35 +7,40 @@
       "cat": "INGENIERÍA · EXÁMENES",
       "desc": "Asesorías de cursos de ingeniería y resolución de exámenes.",
       "c1": "#a37a1f",
-      "c2": "#26610d"
+      "c2": "#26610d",
+      "img": ""
     },
     {
       "name": "DESCUENTOS",
       "cat": "AMAZON · VUELOS",
       "desc": "Descuentos en productos de Amazon y descuentos en vuelos.",
       "c1": "#ffffff",
-      "c2": "#0086ff"
+      "c2": "#0086ff",
+      "img": ""
     },
     {
       "name": "CUENTAS",
       "cat": "STREAMING · IA",
       "desc": "Cuentas de streaming y de ChatGPT o Gemini.",
       "c1": "#1a4910",
-      "c2": "#488434"
+      "c2": "#488434",
+      "img": ""
     },
     {
       "name": "PRODUCTOS",
       "cat": "TIENDA",
-      "desc": "Productos varios con descuentos especiales.",
+      "desc": "Productos de nuestra tienda, con descuentos reales.",
       "c1": "#568d9f",
-      "c2": "#3e6674"
+      "c2": "#3e6674",
+      "img": ""
     },
     {
       "name": "PERSONALIZADOS",
       "cat": "A TU MEDIDA",
       "desc": "Productos y servicios personalizados para lo que necesites.",
       "c1": "#02224c",
-      "c2": "#bb1001"
+      "c2": "#bb1001",
+      "img": ""
     }
   ],
   "spotlight": {
@@ -52,109 +57,120 @@
   "products": [
     {
       "id": "p1",
-      "name": "Asesoría de examen",
-      "cat": "Asesorías",
+      "name": "Audífonos inalámbricos",
+      "cat": "Tecnología",
       "tags": [
-        "ingeniería",
-        "exámenes"
+        "bluetooth",
+        "audio"
       ],
-      "price": "desde S/ 30",
-      "desc": "Resolución y asesoría de exámenes de cursos de ingeniería: cálculo, física, estática, y más. Cuéntanos tu curso y fecha.",
+      "price": "S/ 89",
+      "oldPrice": "S/ 129",
+      "desc": "Audífonos bluetooth con cancelación de ruido, estuche de carga y hasta 24 horas de batería. Nuevos y sellados.",
       "pinned": true,
       "featured": true,
       "img": ""
     },
     {
       "id": "p2",
-      "name": "Cuenta ChatGPT Plus",
-      "cat": "Cuentas",
+      "name": "Smartwatch deportivo",
+      "cat": "Tecnología",
       "tags": [
-        "ia",
-        "chatgpt"
+        "reloj",
+        "deporte"
       ],
-      "price": "S/ 25 / mes",
-      "desc": "Acceso a ChatGPT Plus (GPT actual) en cuenta compartida o privada. Entrega el mismo día.",
+      "price": "S/ 119",
+      "oldPrice": "S/ 169",
+      "desc": "Reloj inteligente con monitor de ritmo cardíaco, GPS y resistencia al agua. Compatible con Android y iPhone.",
       "pinned": true,
       "featured": true,
       "img": ""
     },
     {
       "id": "p3",
-      "name": "Netflix 1 mes",
-      "cat": "Cuentas",
+      "name": "Mochila antirrobo",
+      "cat": "Accesorios",
       "tags": [
-        "streaming"
+        "viaje",
+        "seguridad"
       ],
-      "price": "S/ 12",
-      "desc": "Perfil de Netflix por 30 días, con garantía. Renovable cada mes.",
+      "price": "S/ 75",
+      "oldPrice": "S/ 99",
+      "desc": "Mochila con cierre oculto, puerto USB y compartimento acolchado para laptop de hasta 15.6 pulgadas.",
       "pinned": true,
       "featured": true,
       "img": ""
     },
     {
       "id": "p4",
-      "name": "Descuento Amazon",
-      "cat": "Descuentos",
+      "name": "Lámpara LED de escritorio",
+      "cat": "Hogar",
       "tags": [
-        "amazon",
-        "compras"
+        "luz",
+        "escritorio"
       ],
-      "price": "según producto",
-      "desc": "Conseguimos descuentos en productos de Amazon y te los traemos. Pásanos el link del producto que quieres.",
+      "price": "S/ 45",
+      "oldPrice": "S/ 60",
+      "desc": "Lámpara regulable con 3 tonos de luz, brazo flexible y puerto de carga. Ideal para estudiar o trabajar.",
       "pinned": true,
       "featured": true,
       "img": ""
     },
     {
       "id": "p5",
-      "name": "Vuelos con descuento",
-      "cat": "Descuentos",
+      "name": "Teclado mecánico",
+      "cat": "Tecnología",
       "tags": [
-        "viajes",
-        "vuelos"
+        "pc",
+        "gamer"
       ],
-      "price": "según ruta",
-      "desc": "Buscamos y conseguimos tarifas con descuento para tus vuelos nacionales e internacionales.",
+      "price": "S/ 139",
+      "oldPrice": "S/ 189",
+      "desc": "Teclado mecánico retroiluminado RGB, switches azules y estructura reforzada. Nuevo en caja.",
       "pinned": false,
       "featured": true,
       "img": ""
     },
     {
       "id": "p6",
-      "name": "Cuenta Gemini Advanced",
-      "cat": "Cuentas",
+      "name": "Power bank 20 000 mAh",
+      "cat": "Tecnología",
       "tags": [
-        "ia",
-        "gemini"
+        "batería",
+        "viaje"
       ],
-      "price": "S/ 25 / mes",
-      "desc": "Acceso a Gemini Advanced de Google. Entrega rápida y soporte.",
+      "price": "S/ 65",
+      "oldPrice": "S/ 85",
+      "desc": "Batería portátil de carga rápida con dos puertos USB y pantalla de porcentaje. Carga dos equipos a la vez.",
       "pinned": false,
       "featured": true,
       "img": ""
     },
     {
       "id": "p7",
-      "name": "Disney+ 1 mes",
-      "cat": "Cuentas",
+      "name": "Organizador de escritorio",
+      "cat": "Hogar",
       "tags": [
-        "streaming"
+        "orden",
+        "oficina"
       ],
-      "price": "S/ 10",
-      "desc": "Perfil de Disney+ por 30 días con garantía.",
+      "price": "S/ 35",
+      "oldPrice": "",
+      "desc": "Organizador de madera con espacios para documentos, lapiceros y celular. Armado en minutos.",
       "pinned": false,
       "featured": true,
       "img": ""
     },
     {
       "id": "p8",
-      "name": "Pedido personalizado",
-      "cat": "Personalizados",
+      "name": "Botella térmica",
+      "cat": "Accesorios",
       "tags": [
-        "a medida"
+        "acero",
+        "frío-calor"
       ],
-      "price": "cotizamos",
-      "desc": "¿Necesitas algo que no está en la tienda? Cuéntanos qué buscas y te lo cotizamos: productos, servicios, trámites o encargos.",
+      "price": "S/ 39",
+      "oldPrice": "S/ 55",
+      "desc": "Botella de acero inoxidable de 750 ml: mantiene el frío 24 h y el calor 12 h. Libre de BPA.",
       "pinned": false,
       "featured": true,
       "img": ""
@@ -168,17 +184,20 @@
         {
           "name": "Cursos de ingeniería",
           "price": "desde S/ 30",
-          "desc": "Cálculo, física, estática, dinámica, y más. Clases y resolución paso a paso."
+          "desc": "Cálculo, física, estática, dinámica, y más. Clases y resolución paso a paso.",
+          "img": ""
         },
         {
           "name": "Resolución de exámenes",
           "price": "desde S/ 30",
-          "desc": "Nos pasas tu examen o práctica y lo resolvemos contigo, con procedimiento explicado."
+          "desc": "Nos pasas tu examen o práctica y lo resolvemos contigo, con procedimiento explicado.",
+          "img": ""
         },
         {
           "name": "Orientación en derecho",
           "price": "consulta gratis",
-          "desc": "Orientación legal en casos reales: laboral, civil, contratos y reclamos."
+          "desc": "Orientación legal en casos reales: laboral, civil, contratos y reclamos.",
+          "img": ""
         }
       ]
     },
@@ -189,12 +208,14 @@
         {
           "name": "Productos de Amazon",
           "price": "según producto",
-          "desc": "Pásanos el link del producto y te conseguimos descuento y traída."
+          "desc": "Pásanos el link del producto y te conseguimos descuento y traída.",
+          "img": ""
         },
         {
           "name": "Vuelos",
           "price": "según ruta",
-          "desc": "Tarifas con descuento en vuelos nacionales e internacionales."
+          "desc": "Tarifas con descuento en vuelos nacionales e internacionales.",
+          "img": ""
         }
       ]
     },
@@ -205,22 +226,26 @@
         {
           "name": "Netflix",
           "price": "S/ 12 / mes",
-          "desc": "Perfil con garantía, renovable."
+          "desc": "Perfil con garantía, renovable.",
+          "img": ""
         },
         {
           "name": "Disney+",
           "price": "S/ 10 / mes",
-          "desc": "Perfil con garantía, renovable."
+          "desc": "Perfil con garantía, renovable.",
+          "img": ""
         },
         {
           "name": "ChatGPT Plus",
           "price": "S/ 25 / mes",
-          "desc": "Acceso a GPT actual, compartida o privada."
+          "desc": "Acceso a GPT actual, compartida o privada.",
+          "img": ""
         },
         {
           "name": "Gemini Advanced",
           "price": "S/ 25 / mes",
-          "desc": "IA de Google con acceso completo."
+          "desc": "IA de Google con acceso completo.",
+          "img": ""
         }
       ]
     }
@@ -239,6 +264,8 @@
     "PERSONALIZADOS"
   ],
   "footer": {
+    "c1": "#3b1470",
+    "c2": "#7a29c9",
     "col1Title": "GUF Corporation",
     "col1Links": [
       "Asesorías",
@@ -248,14 +275,13 @@
     ],
     "col2Title": "Contacto",
     "col2Links": [
-      "WhatsApp +51 935 090 264",
-      "asesoria.store"
+      "Correo: diegojairo830@gmail.com|mailto:diegojairo830@gmail.com",
+      "Facebook|https://www.facebook.com/profile.php?id=100069446738810"
     ],
     "col3Title": "Información",
     "col3Links": [
-      "Cómo comprar",
-      "Garantías",
-      "Preguntas frecuentes"
+      "No aceptamos reembolsos",
+      "Garantía de producto nuevo"
     ],
     "legal": "© 2026 GUF Corporation — Todos los derechos reservados"
   },

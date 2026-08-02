@@ -10,7 +10,7 @@
      · autoplay     = 6.10 s
    ===================================================================== */
 import {
-  APP, SLIDES, hex, lerp, easeInOut, makeGL, program, buffer, attrib,
+  APP, CONTENT, SLIDES, hex, lerp, easeInOut, makeGL, program, buffer, attrib,
   DispSystem, buildRings, slideArt,
 } from './core.js';
 
@@ -113,6 +113,29 @@ gl.texParameteri(gl.TEXTURE_2D_ARRAY, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LI
 gl.texParameteri(gl.TEXTURE_2D_ARRAY, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
 gl.texParameteri(gl.TEXTURE_2D_ARRAY, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
 gl.texParameteri(gl.TEXTURE_2D_ARRAY, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+/* fotos del admin: si un slide tiene URL de imagen, reemplaza su textura y su
+   miniatura (la imagen debe permitir CORS; ideal subirla al mismo hosting) */
+(CONTENT.heroSlides || []).forEach((s, i) => {
+  if (!s.img) return;
+  const im = new Image();
+  im.crossOrigin = 'anonymous';
+  im.onload = () => {
+    const c = document.createElement('canvas'); c.width = TW; c.height = TH;
+    const x = c.getContext('2d');
+    const k = Math.max(TW / im.width, TH / im.height);   // cover
+    x.drawImage(im, (TW - im.width * k) / 2, (TH - im.height * k) / 2, im.width * k, im.height * k);
+    gl.bindTexture(gl.TEXTURE_2D_ARRAY, texArr);
+    gl.texSubImage3D(gl.TEXTURE_2D_ARRAY, 0, 0, 0, i, TW, TH, 1, gl.RGBA, gl.UNSIGNED_BYTE, c);
+    gl.generateMipmap(gl.TEXTURE_2D_ARRAY);
+    const tc = document.querySelectorAll('.thumb canvas')[i];
+    if (tc) {
+      const side = Math.min(c.width, c.height);
+      tc.getContext('2d').drawImage(c, (c.width - side) / 2, (c.height - side) / 2, side, side, 0, 0, 96, 96);
+    }
+  };
+  im.src = s.img;
+});
 
 /* ------------------------------------------------------------ rings */
 let ringGeo = buildRings();
