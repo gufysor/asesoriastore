@@ -67,6 +67,18 @@ if (spotProd) {
   if (b) { b.textContent = 'Ver producto'; b.addEventListener('click', e => { e.preventDefault(); openProduct(spotProd); }); }
   document.querySelector('.spotcard')?.addEventListener('click', () => openProduct(spotProd));
 }
+/* imagen de la card de Derecho: la del producto o cuadrado plomo oscuro */
+const shot = document.getElementById('spot-shot');
+if (shot) {
+  if (spotProd && spotProd.img) shot.src = spotProd.img;
+  else {
+    const box = shot.parentElement;
+    shot.remove();
+    box.classList.add('ph-dark');
+    box.insertAdjacentHTML('beforeend',
+      `<span class="ph-i" style="font-size:150px">${(spotProd ? spotProd.name : 'GUF').slice(0, 2)}</span>`);
+  }
+}
 
 /* ------------------------------------------------------------ destacados */
 const FEATURED = (CONTENT.products || []).filter(p => p.featured);
@@ -75,15 +87,17 @@ FEATURED.forEach((p, i) => {
   const el = document.createElement('a');
   el.href = '#';
   el.className = 'appcard' + (i === 0 ? ' feature' : '');
-  const art = slideArt(i % SLIDES.length, i === 0 ? 900 : 560);
   el.innerHTML = `
+    ${p.img ? '' : `<span class="ph-i">${p.name.slice(0, 2)}</span>`}
     <span class="appcat">${p.cat}</span>
     <span class="appmeta">
       <span class="appname">${p.name}</span>
       <span class="appdesc">${p.price || ''}</span>
     </span>
     <i class="bt"></i><i class="br"></i><i class="bb"></i><i class="bl"></i>`;
-  el.style.backgroundImage = p.img ? `url(${p.img})` : `url(${art.toDataURL('image/jpeg', 0.86)})`;
+  // sin imagen: cuadrado plomo oscuro con inicial fantasma (texto blanco legible)
+  if (p.img) el.style.backgroundImage = `url(${p.img})`;
+  else el.classList.add('ph-dark');
   el.addEventListener('click', e => { e.preventDefault(); if (Math.abs(grid.scrollLeft - gL) <= 6) openProduct(p); });
   grid.appendChild(el);
 });

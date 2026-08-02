@@ -26,11 +26,16 @@ function ensureModal() {
   return modalRoot;
 }
 export function closeModal() { if (modalRoot) modalRoot.classList.remove('on'); }
+const FRAME = '<i class="gf-t"></i><i class="gf-r"></i><i class="gf-b"></i><i class="gf-l"></i>';
+
 export function openModal({ name, cat, tags = [], price, desc, img, buyLabel = 'Comprar por WhatsApp' }) {
   const root = ensureModal();
-  root.querySelector('.m-card').innerHTML = `
+  const card = root.querySelector('.m-card');
+  card.className = 'm-card gf gf-on';          // marco degradado completo = estado "elegido"
+  card.innerHTML = `
+    ${FRAME}
     <button class="m-x" aria-label="Cerrar">✕</button>
-    <div class="m-img">${img ? `<img src="${esc(img)}" alt="">` : `<span>${esc(name).slice(0, 2)}</span>`}</div>
+    <div class="m-img ph">${img ? `<img src="${esc(img)}" alt="">` : `<span>${esc(name).slice(0, 2)}</span>`}</div>
     <div class="m-body">
       ${cat ? `<span class="m-cat">${esc(cat)}</span>` : ''}
       <h3>${esc(name)}</h3>
@@ -50,34 +55,42 @@ export const openProduct = p => openModal(p);
 const pageRoot = () => document.getElementById('page-root');
 const ROUTES = ['asesorias', 'descuentos', 'cuentas', 'productos', 'login'];
 
-function itemCard(it) {
+/* fila editorial: pocas cosas se presentan como lista de precios, no grilla */
+function itemRow(it) {
   return `<article class="pg-item" data-name="${esc(it.name)}">
-    <div class="pg-thumb">${it.img ? `<img src="${esc(it.img)}" alt="">` : `<span>${esc(it.name).slice(0, 2)}</span>`}</div>
-    <h4>${esc(it.name)}</h4>
-    <p>${esc(it.desc)}</p>
-    <div class="pg-row"><b>${esc(it.price || '')}</b><button class="pg-more">Ver</button></div>
+    <div class="ph">${it.img ? `<img src="${esc(it.img)}" alt="">` : `<span>${esc(it.name).slice(0, 2)}</span>`}</div>
+    <div><h4>${esc(it.name)}</h4><p>${esc(it.desc)}</p></div>
+    <b class="pg-price">${esc(it.price || '')}</b>
+    <span class="pg-go">▶</span>
   </article>`;
 }
 
 function renderSimplePage(key) {
   const pg = (CONTENT.pages || {})[key] || { title: key, intro: '', items: [] };
+  const items = pg.items || [];
   return `
     <header class="pg-head"><button class="pg-back" aria-label="Volver">←</button>
       <span class="pg-brand">${esc(CONTENT.brand)}</span></header>
+    <p class="pg-eyebrow">${esc(CONTENT.brand)} — ${esc(pg.title)}</p>
     <h1 class="pg-title">${esc(pg.title)}</h1>
     <p class="pg-intro">${esc(pg.intro)}</p>
-    <div class="pg-grid">${(pg.items || []).map(itemCard).join('')}</div>
+    <div class="pg-list">${items.length ? items.map(itemRow).join('')
+      : '<p class="pg-empty">Aún no hay ítems aquí — escríbenos y te contamos qué tenemos.</p>'}</div>
     <a class="pg-cta" target="_blank" rel="noopener"
        href="${waLink(`Hola ${CONTENT.brand} 👋, quiero información sobre ${pg.title}.`)}">Consultar por WhatsApp</a>`;
 }
 
+const FRAME_ST = '<i class="gf-t"></i><i class="gf-r"></i><i class="gf-b"></i><i class="gf-l"></i>';
 function productCard(p) {
-  return `<article class="st-card" data-id="${esc(p.id)}">
-    <div class="st-thumb">${p.img ? `<img src="${esc(p.img)}" alt="">` : `<span>${esc(p.name).slice(0, 2)}</span>`}</div>
-    <span class="st-cat">${esc(p.cat)}</span>
-    <h4>${esc(p.name)}</h4>
-    <div class="st-tags">${(p.tags || []).map(t => `<i>${esc(t)}</i>`).join('')}</div>
-    <div class="pg-row"><b>${esc(p.price || '')}</b><button class="pg-more">Ver</button></div>
+  return `<article class="st-card gf" data-id="${esc(p.id)}">
+    ${FRAME_ST}
+    <div class="st-thumb ph">${p.img ? `<img src="${esc(p.img)}" alt="">` : `<span>${esc(p.name).slice(0, 2)}</span>`}</div>
+    <div class="st-meta">
+      <span class="st-cat">${esc(p.cat)}</span>
+      <h4>${esc(p.name)}</h4>
+      <div class="st-tags">${(p.tags || []).map(t => `<i>${esc(t)}</i>`).join('')}</div>
+      <div class="st-row"><b>${esc(p.price || '')}</b><span>Ver ▶</span></div>
+    </div>
   </article>`;
 }
 
@@ -89,13 +102,15 @@ function renderStore(filterCat = 'Todos') {
   return `
     <header class="pg-head"><button class="pg-back" aria-label="Volver">←</button>
       <span class="pg-brand">${esc(CONTENT.brand)}</span></header>
+    <p class="pg-eyebrow">${esc(CONTENT.brand)} — Tienda</p>
     <h1 class="pg-title">Productos</h1>
-    ${pinned.length ? `<h2 class="st-sub">⭐ Fijados</h2>
+    ${pinned.length ? `<h2 class="st-sub">Fijados</h2>
     <div class="st-pinned">${pinned.map(productCard).join('')}</div>` : ''}
     <h2 class="st-sub">Catálogo</h2>
     <div class="st-filters">${cats.map(c =>
       `<button class="st-f${c === filterCat ? ' on' : ''}" data-cat="${esc(c)}">${esc(c)}</button>`).join('')}</div>
-    <div class="pg-grid">${list.map(productCard).join('')}</div>`;
+    <div class="pg-grid">${list.length ? list.map(productCard).join('')
+      : '<p class="pg-empty">No hay productos en esta categoría todavía.</p>'}</div>`;
 }
 
 function renderLogin() {
@@ -103,8 +118,9 @@ function renderLogin() {
     <header class="pg-head"><button class="pg-back" aria-label="Volver">←</button>
       <span class="pg-brand">${esc(CONTENT.brand)}</span></header>
     <div class="lg-box">
-      <h1 class="pg-title" style="font-size:56px">Administración</h1>
-      <p class="pg-intro">Acceso solo para el administrador.</p>
+      <p class="pg-eyebrow" style="margin-top:0">${esc(CONTENT.brand)} — Acceso privado</p>
+      <h1 class="pg-title" style="font-size:64px">Administración</h1>
+      <p class="pg-intro" style="margin-bottom:10px">Acceso solo para el administrador.</p>
       <input id="lg-pass" type="password" placeholder="Contraseña" autocomplete="current-password">
       <button id="lg-go">Entrar</button>
       <p id="lg-err" class="lg-err"></p>
