@@ -57,7 +57,7 @@ export const openProduct = p => openModal(p);
 const pageRoot = () => document.getElementById('page-root');
 const ROUTES = ['asesorias', 'descuentos', 'cuentas', 'productos', 'login'];
 /* acento de la cabecera por página (colores de los slides del hero) */
-const ACCENT = { asesorias: '#26610d', descuentos: '#0086ff', cuentas: '#488434', productos: '#3e6674', login: '#7a29c9' };
+const ACCENT = { asesorias: '#26610d', descuentos: '#0086ff', cuentas: '#488434', productos: '#3e6674', login: '#0086ff' };
 
 /* % de descuento calculado de precio anterior vs actual (si ambos son números) */
 const num = s => { const m = String(s || '').replace(',', '.').match(/(\d+(?:\.\d+)?)/); return m ? parseFloat(m[1]) : null; };

@@ -57,6 +57,8 @@ http.createServer(async (req, res) => {
   }
 
   /* ---------------- estático ---------------- */
+  // datos y respaldos nunca se sirven directo (contienen la contraseña)
+  if (/^\/(data\.json|tokens\.json)$|\.bak$/.test(url)) { res.statusCode = 404; return res.end('404'); }
   // /login (o cualquier ruta sin extensión) sirve la SPA
   let rel = url === '/' ? 'index.html' : url.slice(1);
   if (!path.extname(rel)) rel = 'index.html';

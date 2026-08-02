@@ -1,0 +1,16 @@
+# GUF Corporation — Hostinger / Apache-LiteSpeed
+RewriteEngine On
+
+# API → api.php
+RewriteRule ^api/data$ api.php?r=data [L,QSA]
+RewriteRule ^api/login$ api.php?r=login [L,QSA]
+
+# datos y respaldos nunca se sirven directo (contienen la contraseña del admin)
+<FilesMatch "^(data\.json|tokens\.json|.*\.bak)$">
+  Require all denied
+</FilesMatch>
+
+# SPA: cualquier ruta sin archivo real (/asesorias, /productos, /login...) → index.html
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_URI} !^/api/
+RewriteRule ^ index.html [L]

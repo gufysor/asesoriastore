@@ -49,15 +49,13 @@
   .nav.hidden{transform:translateY(-100%)}
   .nav::after{content:'';position:absolute;left:0;right:0;bottom:0;height:1px;background:rgba(255,255,255,.18)}
   .logo{color:#fff;text-decoration:none;position:absolute;left:32px;top:32px;height:48px;padding:0 18px;border:2px solid #fff;
-        display:grid;place-items:center;font-family:var(--display);font-size:22px;letter-spacing:.16em;line-height:1;
-        animation:lvib 2.6s ease-in-out infinite}
-  /* ondas constantes: dos anillos que salen del logo y se desvanecen */
-  .logo::before,.logo::after{content:'';position:absolute;inset:-2px;border:2px solid rgba(255,255,255,.75);
-        pointer-events:none;animation:lring 2.6s ease-out infinite}
-  .logo::after{animation-delay:1.3s}
-  @keyframes lring{0%{transform:scale(1);opacity:.65}75%{transform:scale(1.5);opacity:0}100%{transform:scale(1.5);opacity:0}}
-  @keyframes lvib{0%,100%{transform:scale(1)}6%{transform:scale(1.035)}12%{transform:scale(1)}}
-  @media (prefers-reduced-motion:reduce){.logo,.logo::before,.logo::after{animation:none}}
+        display:grid;place-items:center;font-family:var(--display);font-size:22px;letter-spacing:.16em;line-height:1}
+  /* ondas muy sutiles: apenas se notan, y el letrero no se mueve */
+  .logo::before,.logo::after{content:'';position:absolute;inset:-2px;border:1px solid rgba(255,255,255,.35);
+        pointer-events:none;animation:lring 3.2s ease-out infinite}
+  .logo::after{animation-delay:1.6s}
+  @keyframes lring{0%{transform:scale(1);opacity:.3}70%{transform:scale(1.12);opacity:0}100%{transform:scale(1.12);opacity:0}}
+  @media (prefers-reduced-motion:reduce){.logo::before,.logo::after{animation:none}}
   .links{margin:0 auto;display:flex;gap:48px}
   /* medido: 16px/24px, "Explore" ocupa 54px de ancho (condensada) */
   .links a{font-family:var(--display);font-size:16px;line-height:24px;letter-spacing:.04em;
@@ -318,8 +316,9 @@
   .mq-item:hover .mq-word{color:#0054fa}
   .mq-thumb{width:94px;height:94px;border-radius:0;object-fit:cover;display:block}
   .browse{display:grid;place-items:center;margin:64px auto 0;height:42px;padding:0 30px;border-radius:16px;
-          background:linear-gradient(180deg,#1668ff,#39c6ff);color:#fff;text-decoration:none;position:relative;
+          background:#000;color:#fff;text-decoration:none;position:relative;transition:background .25s;
           font-family:var(--mono);font-size:12px;letter-spacing:.13em;text-transform:uppercase;width:max-content}
+  .browse:hover{background:#1c1c1c}
   .browse::before{content:'';position:absolute;inset:0;border-radius:16px;padding:2px;background:var(--grad);
         -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
         -webkit-mask-composite:xor;mask-composite:exclude}
