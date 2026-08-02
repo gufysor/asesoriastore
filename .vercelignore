@@ -1,0 +1,11 @@
+serve.js
+api.php
+.htaccess
+data.json
+tokens.json
+*.bak
+seed.sql
+README.md
+PROMPTS_IMAGENES.md
+DESPLIEGUE_HOSTINGER.md
+DESPLIEGUE_VERCEL_SUPABASE.md
