@@ -14,7 +14,7 @@ del administrador (/login) funciona igual que en local.
 
 ## 2. Vercel (5 min)
 
-1. Entra a vercel.com → Add New → Project → **Import** el repo `MARCEKMC/apechain-hero`.
+1. Entra a vercel.com → Add New → Project → **Import** el repo `gufysor/asesoriastore`.
 2. Framework: **Other**. No toques el build (no hay build).
 3. Antes de darle Deploy, abre **Environment Variables** y agrega 3:
    - `SUPABASE_URL` → el Project URL de Supabase
