@@ -16,14 +16,21 @@ export const easeOut = t => 1 - Math.pow(1 - t, 3);
    Top-level await: todos los módulos que importan core esperan a que el
    contenido esté listo antes de arrancar.
    ===================================================================== */
+const HERO_IMAGES = [
+  '/assets/hero/asesorias.jpg',
+  '/assets/hero/descuentos.jpg',
+  '/assets/hero/cuentas.jpg',
+  '/assets/hero/productos.jpg',
+  '/assets/hero/personalizados.jpg',
+];
 const FALLBACK = {
   brand: 'GUF CORPORATION', whatsapp: '51935090264',
   heroSlides: [
-    { name: 'ASESORÍAS',     cat: 'INGENIERÍA · EXÁMENES', desc: 'Asesorías de cursos de ingeniería y resolución de exámenes.', c1: '#a37a1f', c2: '#26610d' },
-    { name: 'DESCUENTOS',    cat: 'AMAZON · VUELOS',       desc: 'Descuentos en productos de Amazon y en vuelos.',              c1: '#ffffff', c2: '#0086ff' },
-    { name: 'CUENTAS',       cat: 'STREAMING · IA',        desc: 'Cuentas de streaming y de ChatGPT o Gemini.',                 c1: '#1a4910', c2: '#488434' },
-    { name: 'PRODUCTOS',     cat: 'TIENDA',                desc: 'Productos varios con descuentos especiales.',                 c1: '#568d9f', c2: '#3e6674' },
-    { name: 'PERSONALIZADOS',cat: 'A TU MEDIDA',           desc: 'Productos y servicios personalizados.',                       c1: '#02224c', c2: '#bb1001' },
+    { name: 'ASESORÍAS',     cat: 'INGENIERÍA · EXÁMENES', desc: 'Asesorías de cursos de ingeniería y resolución de exámenes.', c1: '#a37a1f', c2: '#26610d', img: HERO_IMAGES[0] },
+    { name: 'DESCUENTOS',    cat: 'AMAZON · VUELOS',       desc: 'Descuentos en productos de Amazon y en vuelos.',              c1: '#ffffff', c2: '#0086ff', img: HERO_IMAGES[1] },
+    { name: 'CUENTAS',       cat: 'STREAMING · IA',        desc: 'Cuentas de streaming y de ChatGPT o Gemini.',                 c1: '#1a4910', c2: '#488434', img: HERO_IMAGES[2] },
+    { name: 'PRODUCTOS',     cat: 'TIENDA',                desc: 'Productos varios con descuentos especiales.',                 c1: '#568d9f', c2: '#3e6674', img: HERO_IMAGES[3] },
+    { name: 'PERSONALIZADOS',cat: 'A TU MEDIDA',           desc: 'Productos y servicios personalizados.',                       c1: '#02224c', c2: '#bb1001', img: HERO_IMAGES[4] },
   ],
   products: [], pages: {}, marquee: ['GUF CORPORATION'], footer: {}, spotlight: {},
 };
@@ -31,7 +38,16 @@ async function loadContent() {
   for (const u of ['/api/data', './data.json']) {
     try {
       const r = await fetch(u, { cache: 'no-store' });
-      if (r.ok) { const d = await r.json(); if (d && d.heroSlides) { delete d.adminPass; return d; } }
+      if (r.ok) {
+        const d = await r.json();
+        if (d && d.heroSlides) {
+          delete d.adminPass;
+          /* En producción /api/data viene de Supabase y puede conservar los
+             campos img vacíos de un contenido anterior al despliegue. */
+          d.heroSlides.forEach((slide, i) => { if (!slide.img && HERO_IMAGES[i]) slide.img = HERO_IMAGES[i]; });
+          return d;
+        }
+      }
     } catch (e) { /* siguiente origen */ }
   }
   return FALLBACK;
