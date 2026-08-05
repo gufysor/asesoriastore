@@ -28,6 +28,10 @@ const ASESORIAS_IMAGES = [
   '/assets/pages/asesorias/resolucion-examenes.jpg',
   '/assets/pages/asesorias/orientacion-derecho.jpg',
 ];
+const DESCUENTOS_IMAGES = [
+  '/assets/pages/descuentos/productos-amazon.jpg',
+  '/assets/pages/descuentos/vuelos.jpg',
+];
 const FALLBACK = {
   brand: 'GUF CORPORATION', whatsapp: '51935090264',
   heroSlides: [
@@ -53,6 +57,10 @@ async function loadContent() {
           const asesorias = d.pages && d.pages.asesorias && d.pages.asesorias.items;
           if (asesorias) asesorias.forEach((item, i) => {
             if (!item.img && ASESORIAS_IMAGES[i]) item.img = ASESORIAS_IMAGES[i];
+          });
+          const descuentos = d.pages && d.pages.descuentos && d.pages.descuentos.items;
+          if (descuentos) descuentos.forEach((item, i) => {
+            if (!item.img && DESCUENTOS_IMAGES[i]) item.img = DESCUENTOS_IMAGES[i];
           });
           return d;
         }

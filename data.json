@@ -209,13 +209,13 @@
           "name": "Productos de Amazon",
           "price": "según producto",
           "desc": "Pásanos el link del producto y te conseguimos descuento y traída.",
-          "img": ""
+          "img": "/assets/pages/descuentos/productos-amazon.jpg"
         },
         {
           "name": "Vuelos",
           "price": "según ruta",
           "desc": "Tarifas con descuento en vuelos nacionales e internacionales.",
-          "img": ""
+          "img": "/assets/pages/descuentos/vuelos.jpg"
         }
       ]
     },
