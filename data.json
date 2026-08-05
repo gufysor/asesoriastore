@@ -185,19 +185,19 @@
           "name": "Cursos de ingeniería",
           "price": "desde S/ 30",
           "desc": "Cálculo, física, estática, dinámica, y más. Clases y resolución paso a paso.",
-          "img": ""
+          "img": "/assets/pages/asesorias/cursos-ingenieria.jpg"
         },
         {
           "name": "Resolución de exámenes",
           "price": "desde S/ 30",
           "desc": "Nos pasas tu examen o práctica y lo resolvemos contigo, con procedimiento explicado.",
-          "img": ""
+          "img": "/assets/pages/asesorias/resolucion-examenes.jpg"
         },
         {
           "name": "Orientación en derecho",
           "price": "consulta gratis",
           "desc": "Orientación legal en casos reales: laboral, civil, contratos y reclamos.",
-          "img": ""
+          "img": "/assets/pages/asesorias/orientacion-derecho.jpg"
         }
       ]
     },

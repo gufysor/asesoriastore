@@ -23,6 +23,11 @@ const HERO_IMAGES = [
   '/assets/hero/productos.jpg',
   '/assets/hero/personalizados.jpg',
 ];
+const ASESORIAS_IMAGES = [
+  '/assets/pages/asesorias/cursos-ingenieria.jpg',
+  '/assets/pages/asesorias/resolucion-examenes.jpg',
+  '/assets/pages/asesorias/orientacion-derecho.jpg',
+];
 const FALLBACK = {
   brand: 'GUF CORPORATION', whatsapp: '51935090264',
   heroSlides: [
@@ -45,6 +50,10 @@ async function loadContent() {
           /* En producción /api/data viene de Supabase y puede conservar los
              campos img vacíos de un contenido anterior al despliegue. */
           d.heroSlides.forEach((slide, i) => { if (!slide.img && HERO_IMAGES[i]) slide.img = HERO_IMAGES[i]; });
+          const asesorias = d.pages && d.pages.asesorias && d.pages.asesorias.items;
+          if (asesorias) asesorias.forEach((item, i) => {
+            if (!item.img && ASESORIAS_IMAGES[i]) item.img = ASESORIAS_IMAGES[i];
+          });
           return d;
         }
       }
