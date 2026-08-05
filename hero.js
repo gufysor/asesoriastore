@@ -125,6 +125,20 @@ gl.texParameteri(gl.TEXTURE_2D_ARRAY, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
     const x = c.getContext('2d');
     const k = Math.max(TW / im.width, TH / im.height);   // cover
     x.drawImage(im, (TW - im.width * k) / 2, (TH - im.height * k) / 2, im.width * k, im.height * k);
+
+    /* Conserva el lenguaje visual del arte procedural: la foto sigue siendo
+       protagonista, pero lleva la misma profundidad, marco y numeración que
+       el resto del carrusel en vez de parecer una imagen pegada encima. */
+    const shade = x.createLinearGradient(0, 0, 0, TH);
+    shade.addColorStop(0, 'rgba(0,0,0,.04)');
+    shade.addColorStop(.58, 'rgba(0,0,0,0)');
+    shade.addColorStop(1, 'rgba(0,0,0,.42)');
+    x.fillStyle = shade; x.fillRect(0, 0, TW, TH);
+    x.fillStyle = 'rgba(255,255,255,.93)';
+    x.font = `600 ${Math.round(TW * .052)}px 'DM Mono', monospace`;
+    x.fillText(String(i + 1).padStart(2, '0'), TW * .055, TH * .13);
+    x.strokeStyle = 'rgba(255,255,255,.30)'; x.lineWidth = 3;
+    x.strokeRect(TW * .035, TH * .05, TW * .93, TH * .9);
     gl.bindTexture(gl.TEXTURE_2D_ARRAY, texArr);
     gl.texSubImage3D(gl.TEXTURE_2D_ARRAY, 0, 0, 0, i, TW, TH, 1, gl.RGBA, gl.UNSIGNED_BYTE, c);
     gl.generateMipmap(gl.TEXTURE_2D_ARRAY);

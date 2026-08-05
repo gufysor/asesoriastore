@@ -8,7 +8,7 @@
       "desc": "Asesorías de cursos de ingeniería y resolución de exámenes.",
       "c1": "#a37a1f",
       "c2": "#26610d",
-      "img": ""
+      "img": "./assets/hero/asesorias.jpg"
     },
     {
       "name": "DESCUENTOS",
@@ -16,7 +16,7 @@
       "desc": "Descuentos en productos de Amazon y descuentos en vuelos.",
       "c1": "#ffffff",
       "c2": "#0086ff",
-      "img": ""
+      "img": "./assets/hero/descuentos.jpg"
     },
     {
       "name": "CUENTAS",
@@ -24,7 +24,7 @@
       "desc": "Cuentas de streaming y de ChatGPT o Gemini.",
       "c1": "#1a4910",
       "c2": "#488434",
-      "img": ""
+      "img": "./assets/hero/cuentas.jpg"
     },
     {
       "name": "PRODUCTOS",
@@ -32,7 +32,7 @@
       "desc": "Productos de nuestra tienda, con descuentos reales.",
       "c1": "#568d9f",
       "c2": "#3e6674",
-      "img": ""
+      "img": "./assets/hero/productos.jpg"
     },
     {
       "name": "PERSONALIZADOS",
@@ -40,7 +40,7 @@
       "desc": "Productos y servicios personalizados para lo que necesites.",
       "c1": "#02224c",
       "c2": "#bb1001",
-      "img": ""
+      "img": "./assets/hero/personalizados.jpg"
     }
   ],
   "spotlight": {
