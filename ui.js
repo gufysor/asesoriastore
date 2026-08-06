@@ -56,9 +56,6 @@ export const openProduct = p => openModal(p);
 /* ------------------------------------------------------------ páginas */
 const pageRoot = () => document.getElementById('page-root');
 const ROUTES = ['asesorias', 'descuentos', 'cuentas', 'productos', 'login'];
-/* acento de la cabecera por página (colores de los slides del hero) */
-const ACCENT = { asesorias: '#26610d', descuentos: '#0086ff', cuentas: '#488434', productos: '#3e6674', login: '#0086ff' };
-
 /* % de descuento calculado de precio anterior vs actual (si ambos son números) */
 const num = s => { const m = String(s || '').replace(',', '.').match(/(\d+(?:\.\d+)?)/); return m ? parseFloat(m[1]) : null; };
 export function discountPct(p) {
@@ -67,19 +64,16 @@ export function discountPct(p) {
 }
 
 function heroBand(key, title, intro = '') {
-  return `<div class="pg-hero" style="--pgc:${ACCENT[key] || '#0244f5'}">
+  return `<div class="pg-hero">
     <div class="pg-hero-copy">
-      <p class="pg-eyebrow">${esc(CONTENT.brand)} <span>Servicios seleccionados</span></p>
+      <p class="pg-eyebrow">${esc(CONTENT.brand)} / Servicios</p>
       <h1 class="pg-title">${esc(title)}</h1>
       ${intro ? `<p class="pg-intro">${esc(intro)}</p>` : ''}
     </div>
-    <div class="pg-orbit" aria-hidden="true"><i></i><i></i><i></i><b>GUF</b></div>
-    <span class="pg-scroll">Explorar <i>↓</i></span>
   </div>`;
 }
 
-/* tarjetas editoriales: la numeración y el mosaico rompen la repetición de
-   una lista genérica, sin esconder precio ni llamada a la acción. */
+/* tarjetas editoriales simétricas, con precio y llamada a la acción visibles */
 function itemRow(it, i) {
   const n = String(i + 1).padStart(2, '0');
   return `<article class="pg-item" data-name="${esc(it.name)}">
@@ -95,8 +89,7 @@ function itemRow(it, i) {
 function renderSimplePage(key) {
   const pg = (CONTENT.pages || {})[key] || { title: key, intro: '', items: [] };
   const items = pg.items || [];
-  const accent = ACCENT[key] || '#0244f5';
-  return `<div class="service-page service-${esc(key)}" style="--pgc:${accent}">
+  return `<div class="service-page service-${esc(key)}">
     ${heroBand(key, pg.title, pg.intro)}
     <div class="pg-body">
       <div class="pg-section-head"><span>Nuestros servicios</span><b>${String(items.length).padStart(2, '0')} opciones</b></div>
