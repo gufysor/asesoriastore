@@ -68,18 +68,26 @@ export function discountPct(p) {
 
 function heroBand(key, title, intro = '') {
   return `<div class="pg-hero" style="--pgc:${ACCENT[key] || '#0244f5'}">
-    <p class="pg-eyebrow">${esc(CONTENT.brand)}</p>
-    <h1 class="pg-title">${esc(title)}</h1>
-    ${intro ? `<p class="pg-intro">${esc(intro)}</p>` : ''}
+    <div class="pg-hero-copy">
+      <p class="pg-eyebrow">${esc(CONTENT.brand)} <span>Servicios seleccionados</span></p>
+      <h1 class="pg-title">${esc(title)}</h1>
+      ${intro ? `<p class="pg-intro">${esc(intro)}</p>` : ''}
+    </div>
+    <div class="pg-orbit" aria-hidden="true"><i></i><i></i><i></i><b>GUF</b></div>
+    <span class="pg-scroll">Explorar <i>↓</i></span>
   </div>`;
 }
 
-/* fila editorial con espacio real para la imagen */
-function itemRow(it) {
+/* tarjetas editoriales: la numeración y el mosaico rompen la repetición de
+   una lista genérica, sin esconder precio ni llamada a la acción. */
+function itemRow(it, i) {
+  const n = String(i + 1).padStart(2, '0');
   return `<article class="pg-item" data-name="${esc(it.name)}">
-    <div class="pg-media ph gf">${FRAME}${it.img ? `<img src="${esc(it.img)}" alt="">` : `<span>${esc(it.name).slice(0, 2)}</span>`}</div>
-    <div class="pg-txt"><h4>${esc(it.name)}</h4><p>${esc(it.desc)}</p>
-      <div class="pg-row"><b class="pg-price">${esc(it.price || '')}</b><span class="pg-go">Ver ▶</span></div>
+    <div class="pg-media ph gf">${FRAME}${it.img ? `<img src="${esc(it.img)}" alt="${esc(it.name)}">` : `<span>${esc(it.name).slice(0, 2)}</span>`}
+      <span class="pg-number">${n}</span><span class="pg-view">Ver servicio ↗</span>
+    </div>
+    <div class="pg-txt"><div class="pg-kicker">Servicio <b>${n}</b></div><h4>${esc(it.name)}</h4><p>${esc(it.desc)}</p>
+      <div class="pg-row"><b class="pg-price">${esc(it.price || '')}</b><span class="pg-go">Consultar <i>↗</i></span></div>
     </div>
   </article>`;
 }
@@ -87,11 +95,14 @@ function itemRow(it) {
 function renderSimplePage(key) {
   const pg = (CONTENT.pages || {})[key] || { title: key, intro: '', items: [] };
   const items = pg.items || [];
-  return heroBand(key, pg.title, pg.intro) + `
+  const accent = ACCENT[key] || '#0244f5';
+  return `<div class="service-page service-${esc(key)}" style="--pgc:${accent}">
+    ${heroBand(key, pg.title, pg.intro)}
     <div class="pg-body">
-      <div class="pg-list">${items.length ? items.map(itemRow).join('')
+      <div class="pg-section-head"><span>Nuestros servicios</span><b>${String(items.length).padStart(2, '0')} opciones</b></div>
+      <div class="pg-list" data-count="${items.length}">${items.length ? items.map(itemRow).join('')
         : '<p class="pg-empty">Aún no hay ítems aquí.</p>'}</div>
-    </div>`;
+    </div></div>`;
 }
 
 function productCard(p) {
