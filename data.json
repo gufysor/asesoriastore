@@ -227,25 +227,25 @@
           "name": "Netflix",
           "price": "S/ 12 / mes",
           "desc": "Perfil con garantía, renovable.",
-          "img": ""
+          "img": "/assets/pages/cuentas/netflix.jpg"
         },
         {
           "name": "Disney+",
           "price": "S/ 10 / mes",
           "desc": "Perfil con garantía, renovable.",
-          "img": ""
+          "img": "/assets/pages/cuentas/disney-plus.jpg"
         },
         {
           "name": "ChatGPT Plus",
           "price": "S/ 25 / mes",
           "desc": "Acceso a GPT actual, compartida o privada.",
-          "img": ""
+          "img": "/assets/pages/cuentas/chatgpt-plus.jpg"
         },
         {
           "name": "Gemini Advanced",
           "price": "S/ 25 / mes",
           "desc": "IA de Google con acceso completo.",
-          "img": ""
+          "img": "/assets/pages/cuentas/gemini-advanced.jpg"
         }
       ]
     }

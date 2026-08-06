@@ -32,6 +32,12 @@ const DESCUENTOS_IMAGES = [
   '/assets/pages/descuentos/productos-amazon.jpg',
   '/assets/pages/descuentos/vuelos.jpg',
 ];
+const CUENTAS_IMAGES = [
+  '/assets/pages/cuentas/netflix.jpg',
+  '/assets/pages/cuentas/disney-plus.jpg',
+  '/assets/pages/cuentas/chatgpt-plus.jpg',
+  '/assets/pages/cuentas/gemini-advanced.jpg',
+];
 const FALLBACK = {
   brand: 'GUF CORPORATION', whatsapp: '51935090264',
   heroSlides: [
@@ -61,6 +67,10 @@ async function loadContent() {
           const descuentos = d.pages && d.pages.descuentos && d.pages.descuentos.items;
           if (descuentos) descuentos.forEach((item, i) => {
             if (!item.img && DESCUENTOS_IMAGES[i]) item.img = DESCUENTOS_IMAGES[i];
+          });
+          const cuentas = d.pages && d.pages.cuentas && d.pages.cuentas.items;
+          if (cuentas) cuentas.forEach((item, i) => {
+            if (!item.img && CUENTAS_IMAGES[i]) item.img = CUENTAS_IMAGES[i];
           });
           return d;
         }
